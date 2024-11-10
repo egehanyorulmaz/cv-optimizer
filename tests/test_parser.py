@@ -1,7 +1,7 @@
 import pytest
 import asyncio
 from pathlib import Path
-from src.infrastructure.parsers.pdf_parser import PDFParser
+from infrastructure.parsers.pdf_parser import PDFParser
 
 class TestPDFParser:
     @pytest.fixture

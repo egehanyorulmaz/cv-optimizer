@@ -1,6 +1,6 @@
 from typing import Protocol, BinaryIO
 from abc import abstractmethod
-from ..domain.resume import Resume
+from src.domain.resume import Resume
 
 class DocumentParser(Protocol):
     """Interface for parsing different document formats into our Resume domain model"""

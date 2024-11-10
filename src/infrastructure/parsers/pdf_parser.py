@@ -2,8 +2,8 @@ from typing import List
 import pdfplumber
 from datetime import datetime
 import re
-from ...core.ports.document_parser import DocumentParser
-from ...core.domain.resume import Resume, ContactInfo, Experience, Education
+from src.core.ports.document_parser import DocumentParser
+from src.core.domain.resume import Resume, ContactInfo, Experience, Education
 
 class PDFParser(DocumentParser):
     def __init__(self):
