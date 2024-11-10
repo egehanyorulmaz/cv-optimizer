@@ -1,12 +1,13 @@
-from typing import Protocol, BinaryIO
+from typing import Protocol, overload, Union
 from abc import abstractmethod
-from src.core.domain.resume import Resume
+from pathlib import Path
+from cv_optimizer.core.domain.resume import Resume
 
 class DocumentParser(Protocol):
     """Interface for parsing different document formats into our Resume domain model"""
     
     @abstractmethod
-    async def parse(self, content: bytes) -> Resume:
+    async def parse(self, content: Union[Path, bytes]) -> Resume:
         """Parse document content into a Resume object"""
         pass
     

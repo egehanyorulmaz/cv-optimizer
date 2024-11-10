@@ -1,6 +1,6 @@
 from typing import List
 import openai
-from src.core.ports.ai_provider import AIProvider, AIOptions
+from cv_optimizer.core.ports.ai_provider import AIProvider, AIOptions
 
 class OpenAIProvider(AIProvider):
     def __init__(self, api_key: str):

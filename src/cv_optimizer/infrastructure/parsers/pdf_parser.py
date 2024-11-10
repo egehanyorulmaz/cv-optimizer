@@ -1,9 +1,9 @@
 from typing import List
 import pdfplumber
-from datetime import datetime
 import re
-from src.core.ports.document_parser import DocumentParser
-from src.core.domain.resume import Resume, ContactInfo, Experience, Education
+from pathlib import Path
+from cv_optimizer.core.ports.document_parser import DocumentParser
+from cv_optimizer.core.domain.resume import Resume, ContactInfo, Experience, Education
 
 class PDFParser(DocumentParser):
     def __init__(self):
@@ -13,7 +13,7 @@ class PDFParser(DocumentParser):
     def supported_formats(self) -> List[str]:
         return self._supported_formats
 
-    async def parse(self, content: bytes) -> Resume:
+    async def parse(self, content: Path) -> Resume:
         with pdfplumber.open(content) as pdf:
             text = '\n'.join(page.extract_text() for page in pdf.pages)
             
