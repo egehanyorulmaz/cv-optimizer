@@ -37,10 +37,10 @@ class Resume:
     certifications: Optional[List[str]] = None
     
     def to_dict(self) -> dict:
-        # Implementation for serialization
+        # serialization
         pass
 
     @classmethod
     def from_dict(cls, data: dict) -> 'Resume':
-        # Implementation for deserialization
+        # deserialization
         pass 
