@@ -15,10 +15,7 @@ class TestPDFParser:
     
     @pytest.mark.asyncio
     async def test_resume_parsing(self, parser, sample_resume_path):
-        # Read resume file
         content = sample_resume_path.read_bytes()
-        
-        # Parse resume
         resume = await parser.parse(content)
         
         # Assertions to verify parsing
@@ -26,7 +23,6 @@ class TestPDFParser:
         assert resume.contact_info.name != ""
         assert '@' in resume.contact_info.email
         
-        # Add more specific assertions as needed
         
     def print_resume_details(self, resume):
         """Helper method to print resume details for debugging"""
@@ -68,16 +64,14 @@ async def debug_resume_parsing(file_path: str):
         TestPDFParser().print_resume_details(resume)
     except Exception as e:
         print(f"Error parsing resume: {str(e)}")
-        raise  # Re-raise the exception for debugging
+        raise
 
 if __name__ == "__main__":
     import sys
     
     if len(sys.argv) > 1:
-        # If file path is provided as argument
         file_path = sys.argv[1]
     else:
-        # Default test file path
         file_path = "tests/fixtures/sample_resume.pdf"
     
     print(f"Debugging resume parsing for file: {file_path}")
