@@ -1,1 +1,9 @@
-pdfplumber>=0.7.0
+pdfplumber
+pypdf
+python-dotenv
+openai
+pytest
+pytest-asyncio
+pydantic
+typing-extensions
+pathlib
