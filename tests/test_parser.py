@@ -1,7 +1,7 @@
 import pytest
 import asyncio
 from pathlib import Path
-from infrastructure.parsers.pdf_parser import PDFParser
+from cv_optimizer.infrastructure.parsers.pdf_parser import PDFParser
 
 class TestPDFParser:
     @pytest.fixture
@@ -11,7 +11,7 @@ class TestPDFParser:
     @pytest.fixture
     def sample_resume_path(self):
         # Update this path to point to your test resume file
-        return Path("tests/fixtures/sample_resume.pdf")
+        return Path("./fixtures/sample_resume.pdf")
     
     @pytest.mark.asyncio
     async def test_resume_parsing(self, parser, sample_resume_path):
