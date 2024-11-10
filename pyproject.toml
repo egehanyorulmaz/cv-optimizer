@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "search_agent"
+version = "0.1.0"
+authors = [
+    { name = "Egehan Yorulmaz", email = "egehanyorulmaz@gmail.com" },
+]
+description = "A multi-agent solution to optimize resumes"
+requires-python = ">=3.11"
