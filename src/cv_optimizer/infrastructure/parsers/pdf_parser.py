@@ -1,7 +1,7 @@
 from typing import List
 import pdfplumber
 import re
-from pathlib import Path
+from io import BytesIO
 from cv_optimizer.core.ports.document_parser import DocumentParser
 from cv_optimizer.core.domain.resume import Resume, ContactInfo, Experience, Education
 
@@ -13,28 +13,29 @@ class PDFParser(DocumentParser):
     def supported_formats(self) -> List[str]:
         return self._supported_formats
 
-    async def parse(self, content: Path) -> Resume:
-        with pdfplumber.open(content) as pdf:
-            text = '\n'.join(page.extract_text() for page in pdf.pages)
-            
-        # Parse sections
-        sections = self._split_into_sections(text)
+    async def parse(self, content: bytes) -> Resume:
+        # Convert bytes to file-like object
+        pdf_file = BytesIO(content)
         
-        contact_info = self._parse_contact_info(sections.get('contact', ''))
-        summary = sections.get('summary', '').strip()
-        experiences = self._parse_experiences(sections.get('experience', ''))
-        education = self._parse_education(sections.get('education', ''))
-        skills = self._parse_skills(sections.get('skills', ''))
-        certifications = self._parse_certifications(sections.get('certifications', ''))
-
-        return Resume(
-            contact_info=contact_info,
-            summary=summary,
-            experiences=experiences,
-            education=education,
-            skills=skills,
-            certifications=certifications
-        )
+        try:
+            with pdfplumber.open(pdf_file) as pdf:
+                text = ""
+                for page in pdf.pages:
+                    text += page.extract_text() or ""
+                
+                sections = self._split_into_sections(text)
+                
+                return Resume(
+                    contact_info=self._parse_contact_info(sections.get('contact', '')),
+                    summary=sections.get('summary', '').strip(),
+                    experiences=self._parse_experiences(sections.get('experience', '')),
+                    education=self._parse_education(sections.get('education', '')),
+                    skills=self._parse_skills(sections.get('skills', '')),
+                    certifications=self._parse_certifications(sections.get('certifications', ''))
+                )
+                
+        except Exception as e:
+            raise ValueError(f"Failed to parse PDF: {str(e)}") from e
 
     async def reconstruct(self, resume: Resume) -> bytes:
         # This would require a PDF generation library like ReportLab
