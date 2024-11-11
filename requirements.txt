@@ -7,3 +7,9 @@ pytest-asyncio
 pydantic
 typing-extensions
 pathlib
+presidio-analyzer
+presidio-anonymizer
+spacy
+pii-data
+pii-extract-base
+PyPDF2
