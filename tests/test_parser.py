@@ -15,7 +15,7 @@ class TestPDFParser:
     
     @pytest.mark.asyncio
     async def test_resume_parsing(self, parser, sample_resume_path):
-        content = sample_resume_path.read_bytes()
+        content = Path(sample_resume_path).read_bytes()
         resume = await parser.parse(content)
         
         # Assertions to verify parsing
