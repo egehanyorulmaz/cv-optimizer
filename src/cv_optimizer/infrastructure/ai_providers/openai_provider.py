@@ -2,6 +2,7 @@ from typing import List
 import openai
 from cv_optimizer.core.ports.ai_provider import AIProvider, AIOptions
 
+
 class OpenAIProvider(AIProvider):
     def __init__(self, api_key: str):
         self.client = openai.AsyncOpenAI(api_key=api_key)
@@ -12,13 +13,12 @@ class OpenAIProvider(AIProvider):
             messages=[{"role": "user", "content": prompt}],
             temperature=options.temperature,
             max_tokens=options.max_tokens,
-            stop=options.stop_sequences
+            stop=options.stop_sequences,
         )
         return response.choices[0].message.content
 
     async def embed(self, text: str) -> List[float]:
         response = await self.client.embeddings.create(
-            model="text-embedding-ada-002",
-            input=text
+            model="text-embedding-ada-002", input=text
         )
-        return response.data[0].embedding 
+        return response.data[0].embedding
