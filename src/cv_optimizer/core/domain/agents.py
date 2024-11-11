@@ -3,11 +3,13 @@ from enum import Enum
 from typing import Protocol, List, Any, Optional
 from cv_optimizer.core.domain.resume import Resume
 
+
 class AgentType(Enum):
     CRITIC = "critic"
     OPTIMIZER = "optimizer"
     LANGUAGE = "language"
     ATS = "ats"
+
 
 @dataclass
 class AgentResponse:
@@ -16,12 +18,14 @@ class AgentResponse:
     confidence_score: float
     metadata: dict[str, Any]
 
+
 @dataclass
 class OptimizationContext:
     resume: Resume
     optimization_history: List[AgentResponse]
     target_job: Optional[str] = None
     industry: Optional[str] = None
+
 
 class Agent(Protocol):
     async def process(self, context: OptimizationContext) -> AgentResponse:
