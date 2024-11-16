@@ -2,9 +2,6 @@ from cv_optimizer.core.ports.privacy_filter import BasePrivacyFilter
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
-import importlib.resources as pkg_resources
-from cv_optimizer import data
-import PyPDF2
 import re
 from typing import Dict, Tuple
 
