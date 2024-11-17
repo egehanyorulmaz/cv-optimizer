@@ -1,13 +1,13 @@
 # Source Code Directory
 
-This directory contains the main application code organized following hexagonal architecture principles.
+This directory contains the main application code organized following hexagonal architecture principles. For more details about the design principles, please refer to [system design principles](https://www.geeksforgeeks.org/hexagonal-architecture-system-design/).
 
 ## Structure
 
 - `core/` - Core business logic and domain models
 - `infrastructure/` - External implementations and adapters
 - `agents/` - AI agent implementations
-- `api/` - API layer interfaces
+- `templates/` - LLM prompts stored in jinja format
 - `utils/` - Shared utilities and helpers
 
 ## Guidelines
