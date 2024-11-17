@@ -11,7 +11,14 @@ from cv_optimizer.infrastructure.template_service.exceptions import (
 
 @pytest.fixture
 def template_dir(tmp_path):
-    """Create a temporary directory with test templates."""
+    """
+    Create a temporary directory with test templates.
+    
+    :param tmp_path: Pytest temporary path fixture
+    :type tmp_path: Path
+    :returns: Path to template directory
+    :rtype: Path
+    """
     template_dir = tmp_path / "templates"
     template_dir.mkdir()
     
@@ -28,27 +35,46 @@ def template_dir(tmp_path):
 
 @pytest.fixture
 def template_service(template_dir):
-    """Create a JinjaTemplateService instance with test templates."""
+    """
+    Create a JinjaTemplateService instance with test templates.
+    
+    :param template_dir: Path to template directory
+    :type template_dir: Path
+    :returns: Configured template service
+    :rtype: JinjaTemplateService
+    """
     config = TemplateConfig.testing(templates_dir=template_dir)
     return JinjaTemplateService(config)
 
 
-def test_successful_template_rendering(template_service):
-    """Test successful template rendering."""
-    result = template_service.render_prompt(
-        "valid_template.j2",
-        name="World"
-    )
-    assert result == "Hello World!"
-
-
 def test_template_not_found(template_service):
-    """Test handling of non-existent templates."""
+    """
+    Test handling of non-existent templates.
+    
+    :param template_service: Template service instance
+    :type template_service: JinjaTemplateService
+    :raises TemplateNotFoundError: Expected to be raised
+    """
     with pytest.raises(TemplateNotFoundError) as exc_info:
-        template_service.render_prompt("nonexistent.j2", {})
+        # Pass kwargs correctly using unpacking
+        template_service.render_prompt("nonexistent.j2", **{"dummy": "value"})
     
     assert exc_info.value.template_name == "nonexistent.j2"
     assert isinstance(exc_info.value.search_paths, list)
+
+
+def test_successful_template_rendering(template_service):
+    """
+    Test successful template rendering.
+    
+    :param template_service: Template service instance
+    :type template_service: JinjaTemplateService
+    """
+    result = template_service.render_prompt(
+        "valid_template.j2",
+        **{"name": "World"}  # Use kwargs unpacking
+    )
+    assert result == "Hello World!"
 
 
 def test_with_real_templates():
