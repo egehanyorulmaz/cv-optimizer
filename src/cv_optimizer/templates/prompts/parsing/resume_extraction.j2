@@ -1,0 +1,17 @@
+You are a precise resume parser. Your task is to extract structured information from the following resume text and return it in JSON format exactly matching the provided schema.
+
+Resume Text:
+{{ text }}
+
+Required Output Schema:
+{{ schema }}
+
+Rules:
+1. Extract all dates in ISO format (YYYY-MM-DD)
+2. Ensure all required fields are present
+3. Split experience descriptions and achievements into clear, separate bullet points
+4. Normalize skill names (e.g., "Python 3" -> "Python")
+5. Include only factual information present in the text
+6. Return valid JSON only
+
+Parse the resume and respond with the JSON structure only. 
