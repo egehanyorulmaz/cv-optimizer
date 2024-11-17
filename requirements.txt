@@ -2,8 +2,6 @@ pdfplumber
 pypdf
 python-dotenv
 openai
-pytest
-pytest-asyncio
 pydantic
 typing-extensions
 pathlib
