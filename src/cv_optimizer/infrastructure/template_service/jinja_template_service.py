@@ -1,5 +1,4 @@
-from typing import Any, Dict
-from pathlib import Path
+from typing import Any
 import logging
 from jinja2 import Environment, FileSystemLoader, select_autoescape, TemplateNotFound
 
@@ -11,14 +10,12 @@ logger = logging.getLogger(__name__)
 
 class JinjaTemplateService(TemplateService):
     """
-    Jinja2 implementation of the template service.
+    Jinja implementation of the template service.
     
-    :param config: Template configuration
+    :param config: Configuration for the template service
     :type config: TemplateConfig
     """
-    
     def __init__(self, config: TemplateConfig):
-        """Initialize the Jinja2 template service."""
         self.config = config
         self.env = Environment(
             loader=FileSystemLoader(
@@ -27,30 +24,32 @@ class JinjaTemplateService(TemplateService):
             ),
             autoescape=select_autoescape(['html', 'xml']),
             trim_blocks=True,
-            lstrip_blocks=True,
-            auto_reload=config.auto_reload,
-            cache_size=200 if config.cache_enabled else 0
+            lstrip_blocks=True
         )
-        
-        # Add custom filters if needed
-        self.env.filters['clean_whitespace'] = lambda x: ' '.join(x.split())
 
-    def render_prompt(self, template_name: str, **kwargs: Dict[str, Any]) -> str:
+    def render_prompt(self, template_name: str, **kwargs: Any) -> str:
         """
-        Render a prompt template with the given context.
+        Render a template with the given context variables.
         
+        :param template_name: Name of the template to render
+        :type template_name: str
+        :param kwargs: Template context variables
+        :type kwargs: Any
+        :returns: Rendered template string
+        :rtype: str
         :raises TemplateNotFoundError: If template doesn't exist
         :raises TemplateRenderError: If rendering fails
         """
         try:
             template = self.env.get_template(template_name)
-            return template.render(**kwargs)
         except TemplateNotFound:
-            logger.error(f"Template not found: {template_name}")
-            raise TemplateNotFoundError(template_name)
+            search_paths = [str(self.config.templates_dir)]  # Always provide search paths
+            raise TemplateNotFoundError(template_name, search_paths)
+            
+        try:
+            return template.render(**kwargs)
         except Exception as e:
-            logger.error(f"Failed to render template {template_name}: {str(e)}")
-            raise TemplateRenderError(template_name, str(e))
+            raise TemplateRenderError(template_name, str(e), kwargs)
 
     def get_template_names(self) -> list[str]:
         """Get list of available template names."""
