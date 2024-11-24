@@ -46,15 +46,7 @@ class AIProviderConfig:
     model_name: str = "gpt-4o"
     temperature: float = 0.7
     max_tokens: Optional[int] = None
-    top_p: float = 1.0
-    frequency_penalty: float = 0.0
-    presence_penalty: float = 0.0
-    timeout: int = 30
-    max_retries: int = 3
-    retry_delay: int = 1
 
 @dataclass
 class OpenAIConfig(AIProviderConfig):
     api_version: str = "2024-02-15"
-    organization_id: Optional[str] = None
-    base_url: Optional[str] = None 
