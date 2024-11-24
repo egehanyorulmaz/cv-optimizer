@@ -39,4 +39,14 @@ class TemplateConfig:
             cache_enabled=False,
             auto_reload=True,
             cache_ttl=0
-        ) 
+        )
+
+@dataclass
+class AIProviderConfig:
+    model_name: str = "gpt-4o"
+    temperature: float = 0.7
+    max_tokens: Optional[int] = None
+
+@dataclass
+class OpenAIConfig(AIProviderConfig):
+    api_version: str = "2024-02-15"
