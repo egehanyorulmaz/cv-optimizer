@@ -21,3 +21,12 @@ Built using hexagonal architecture principles, ensuring:
 - Comprehensive testing
 
 This is a side project that I'm currently working on, but I intend to deliver an end-to-end product until the end of this year. For more details about the vision, visit [CV Optimizer Notion Page](https://marmalade-cilantro-afb.notion.site/CV-Optimizer-13ad4b67bf9980338f2dd35552053751).
+
+## Setup
+
+1. Clone the repository
+2. Create a virtual environment:
+3. Install dependencies
+4. Create a `.env.` file in the project root
+5. Configure your environment variables in `.env`
+6. Run tests to verify setup by running 'pytest' in your terminal
