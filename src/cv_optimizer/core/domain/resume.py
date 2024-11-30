@@ -9,7 +9,7 @@ class ContactInfo:
     email: str
     phone: Optional[str] = None
     location: Optional[str] = None
-    linkedin: Optional[str] = None
+    links: Optional[List[str]] = None
 
 
 @dataclass
@@ -39,12 +39,14 @@ class Resume:
     education: List[Education]
     skills: List[str]
     certifications: Optional[List[str]] = None
+    achievements: Optional[List[str]] = None
+    publications: Optional[List[str]] = None
 
     def to_dict(self) -> dict:
         # serialization
-        pass
+        raise NotImplementedError("Resume.to_dict is not implemented")
 
     @classmethod
     def from_dict(cls, data: dict) -> "Resume":
         # deserialization
-        pass
+        return cls(**data)
