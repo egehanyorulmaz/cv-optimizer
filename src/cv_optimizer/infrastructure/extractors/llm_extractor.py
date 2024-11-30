@@ -68,9 +68,7 @@ class LLMResumeParser:
         options = AIOptions(temperature=0.0)
         response = await self._ai_provider.complete(prompt, options)
         
-        # Parse LLM response into Resume object
-        resume_dict = self._parse_llm_response(response)
-        return Resume.from_dict(resume_dict)
+        return Resume.parse_raw_json(response)
 
     async def _read_file(self, path: Path) -> str:
         """Read and extract text from various file formats.
@@ -91,55 +89,3 @@ class LLMResumeParser:
             return await parser.extract_text(path)
         else:
             raise ValueError(f"Unsupported file format: {path.suffix}")
-
-    def _parse_llm_response(self, response: str) -> dict:
-        """Parse the LLM's JSON response into a dictionary.
-
-        :param response: JSON string response from the LLM
-        :type response: str
-
-        :return: Parsed JSON data
-        :rtype: dict
-
-        :raises ValueError: If the response cannot be parsed as valid JSON
-        """
-        json_string = re.sub(r'^json|\s*$', '', response)  # Removes 'json' prefix and any leading/trailing whitespace
-        json_string = json_string.replace("'", '"')  # Replace single quotes with double quotes
-        json_string = re.sub(r',(\s*[\}\]])', r'\1', json_string)  # Remove trailing commas
-        json_string = json_string.strip()
-
-        # Parse the JSON string
-        try:
-            parsed_json = json.loads(json_string)
-            return parsed_json
-        except json.JSONDecodeError as e:
-            raise e
-
-
-async def main(parser):
-    resume = await parser.parse(test_file_path)
-    print(resume)
-
-
-if __name__ == "__main__":
-    from cv_optimizer.core.domain.constants import PROJECT_ROOT
-    import asyncio
-
-    test_file_path = PROJECT_ROOT / "tests/fixtures/sample_resume.pdf"
-    template_dir = PROJECT_ROOT / "src" / "cv_optimizer" / "templates"
-
-    config = OpenAIConfig(
-        model_name="gpt-4o-mini",
-        temperature=0.0,
-    )
-
-    template_config = TemplateConfig(
-        templates_dir=template_dir,
-        default_encoding="utf-8"
-    )
-
-    open_ai_provider = OpenAIProvider(config=config)
-    jinja_template_service = JinjaTemplateService(config=template_config)
-    parser = LLMResumeParser(ai_provider=open_ai_provider, template_service=jinja_template_service)
-
-    asyncio.run(main(parser))
