@@ -1,0 +1,58 @@
+Extract the following information from this resume and format it as a JSON object:
+- Contact information (name, email, phone, location, linkedin)
+- Professional summary
+- Work experiences (with title, company, dates, descriptions, and achievements)
+- Education (with degree, institution, graduation date, GPA if available)
+- Skills
+- Certifications (if any)
+- Achievements (if any)
+- Publications (if any)
+
+
+Rules:
+1. Extract all dates in ISO format (YYYY-MM-DD). If day is not specified, use the first day of the month.
+2. Ensure all required fields are present. If a field is not present, leave it blank.
+3. Split experience descriptions and achievements into clear, separate bullet points.
+4. Normalize skill names (e.g., "Python 3" -> "Python").
+5. Include only factual information present in the text. Don't make assumptions.
+6. Return valid JSON only. If any value on the expected output format is not specified on the resume, provide an empty string, or [] to return a valid JSON object
+
+
+### Resume text ###
+{{ resume_text }}
+
+### Expected output format ###
+Format the response as a valid JSON object matching this structure:
+{
+    "contact_info": {
+        "name": "",
+        "email": "",
+        "phone": "",
+        "location": "",
+        "links": [""]
+    },
+    "summary": "",
+    "experiences": [
+        {
+            "title": "",
+            "company": "",
+            "start_date": "YYYY-MM-DD",
+            "end_date": "YYYY-MM-DD",
+            "description": [""],
+            "achievements": [""]
+        }
+    ],
+    "education": [
+        {
+            "degree": "",
+            "institution": "",
+            "graduation_date": "YYYY-MM-DD",
+            "gpa": "",
+            "highlights": [""]
+        }
+    ],
+    "skills": [""],
+    "certifications": [""],
+    "achievements": [""],
+    "publications": [""],
+}

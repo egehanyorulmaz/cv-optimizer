@@ -16,7 +16,7 @@ class TemplateConfig:
     def default(cls) -> "TemplateConfig":
         """Create default template configuration"""
         return cls(
-            templates_dir=PROJECT_ROOT / "templates",
+            templates_dir=PROJECT_ROOT / "src/cv_optimizer/templates",
             cache_enabled=True,
             cache_ttl=3600,
             default_encoding='utf-8',
