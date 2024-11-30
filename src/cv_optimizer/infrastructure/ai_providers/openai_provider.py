@@ -12,15 +12,13 @@ class OpenAIProvider(AIProvider):
     
     def __init__(self, config: OpenAIConfig):
         """
-        Initialize OpenAI provider with API key.
+        Initialize OpenAI provider with API key and global options.
         
-        :param config: OpenAI configuration
+        :param config: Configuration for OpenAI provider containing global options
         :type config: OpenAIConfig
         :raises AIProviderError: If API key is not provided or found in environment
         """
         load_dotenv()
-        
-        self.config = config
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise AIProviderError("OpenAI API key not found. Set OPENAI_API_KEY environment variable.")
@@ -31,22 +29,33 @@ class OpenAIProvider(AIProvider):
             client.models.list()
         except Exception as e:
             raise AIProviderError(f"Failed to initialize OpenAI client: {str(e)}")
+            
+        self.global_options = AIOptions(
+            temperature=config.temperature,
+            max_tokens=config.max_tokens
+        )
+        self.model_name = config.model_name
 
-    async def complete(self, prompt: str) -> str:
+    async def complete(self, prompt: str, prompt_specific_options: AIOptions = None) -> str:
         """
         Generate completion using OpenAI API.
         
         :param prompt: Input prompt
         :type prompt: str
+        :param prompt_specific_options: Options specific to this prompt call, overrides global options if provided
+        :type prompt_specific_options: AIOptions, optional
         :return: Generated completion text
         :rtype: str
         :raises AIProviderError: If API call fails.
         """
+        # Use prompt-specific options if provided, otherwise use global options
+        options_to_use = prompt_specific_options if prompt_specific_options is not None else self.global_options
+        
         try:
             response = await self.client.chat.completions.create(
-                model=self.config.model_name,
-                temperature=self.config.temperature,
-                max_tokens=self.config.max_tokens,
+                model=self.model_name,
+                temperature=options_to_use.temperature,
+                max_tokens=options_to_use.max_tokens,
                 messages=[{"role": "user", "content": prompt}]
             )
             return response.choices[0].message.content
