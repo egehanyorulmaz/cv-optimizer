@@ -1,7 +1,6 @@
 import pytest
 from pathlib import Path
 from reportlab.pdfgen import canvas
-from cv_optimizer.core.domain.constants import PROJECT_ROOT
 
 @pytest.fixture(scope="session")
 def sample_resume_pdf(tmp_path_factory):
