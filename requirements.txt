@@ -1,4 +1,4 @@
-pdfplumber
+pdfplumber>=0.10.3
 pypdf
 python-dotenv
 openai
@@ -11,3 +11,4 @@ spacy
 pii-data
 pii-extract-base
 PyPDF2
+python-dateutil>=2.8.2
