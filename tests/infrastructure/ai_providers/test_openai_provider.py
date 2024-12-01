@@ -1,9 +1,9 @@
 import pytest
 import os
 from unittest.mock import AsyncMock, patch, MagicMock
-from cv_optimizer.infrastructure.ai_providers.openai_provider import OpenAIProvider
-from cv_optimizer.infrastructure.ai_providers.exceptions import AIProviderError
-from cv_optimizer.core.domain.config import OpenAIConfig
+from src.infrastructure.ai_providers.openai_provider import OpenAIProvider
+from src.infrastructure.ai_providers.exceptions import AIProviderError
+from src.core.domain.config import OpenAIConfig
 
 @pytest.fixture(autouse=True)
 def mock_env_vars():

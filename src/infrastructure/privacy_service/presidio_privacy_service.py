@@ -1,4 +1,4 @@
-from cv_optimizer.core.ports.privacy_filter import BasePrivacyFilter
+from src.core.ports.privacy_filter import BasePrivacyFilter
 from presidio_analyzer import AnalyzerEngine
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig

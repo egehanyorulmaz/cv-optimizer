@@ -1,10 +1,10 @@
-from cv_optimizer.core.domain.agents import (
+from src.core.domain.agents import (
     Agent,
     AgentResponse,
     AgentType,
     OptimizationContext,
 )
-from cv_optimizer.core.ports.ai_provider import AIProvider, AIOptions
+from src.core.ports.ai_provider import AIProvider, AIOptions
 from typing import List
 
 

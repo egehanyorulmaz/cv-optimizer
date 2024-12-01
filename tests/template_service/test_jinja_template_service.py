@@ -1,8 +1,8 @@
 import pytest
 from pathlib import Path
-from cv_optimizer.core.domain.config import TemplateConfig
-from cv_optimizer.infrastructure.template_service.jinja_template_service import JinjaTemplateService
-from cv_optimizer.infrastructure.template_service.exceptions import (
+from src.core.domain.config import TemplateConfig
+from src.infrastructure.template_service.jinja_template_service import JinjaTemplateService
+from src.infrastructure.template_service.exceptions import (
     TemplateNotFoundError,
     TemplateRenderError,
 )
@@ -20,15 +20,15 @@ def template_dir(tmp_path):
     """
     template_dir = tmp_path / "templates"
     template_dir.mkdir()
-    
+
     # Create a valid template
     valid_template = template_dir / "valid_template.j2"
     valid_template.write_text("Hello {{ name }}!")
-    
+
     # Create an invalid template (Missing closing brace)
     invalid_template = template_dir / "invalid_template.j2"
-    invalid_template.write_text("Hello {{ name }!") 
-    
+    invalid_template.write_text("Hello {{ name }!")
+
     return template_dir
 
 
@@ -57,7 +57,7 @@ def test_template_not_found(template_service):
     with pytest.raises(TemplateNotFoundError) as exc_info:
         # Pass kwargs correctly using unpacking
         template_service.render_prompt("nonexistent.j2", **{"dummy": "value"})
-    
+
     assert exc_info.value.template_name == "nonexistent.j2"
     assert isinstance(exc_info.value.search_paths, list)
 
@@ -74,6 +74,7 @@ def test_successful_template_rendering(template_service):
         **{"name": "World"}  # Use kwargs unpacking
     )
     assert result == "Hello World!"
+
 
 @pytest.mark.skip(reason="Not implemented yet - waiting for real templates")
 def test_with_real_templates():

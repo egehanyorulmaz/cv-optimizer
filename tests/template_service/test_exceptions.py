@@ -1,5 +1,5 @@
 import pytest
-from cv_optimizer.infrastructure.template_service.exceptions import (
+from src.infrastructure.template_service.exceptions import (
     TemplateError,
     TemplateNotFoundError,
     TemplateRenderError,

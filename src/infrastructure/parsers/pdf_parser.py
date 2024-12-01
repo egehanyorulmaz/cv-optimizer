@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 import pdfplumber
 
-from cv_optimizer.infrastructure.parsers.base_parser import BaseDocumentParser
+from src.infrastructure.parsers.base_parser import BaseDocumentParser
 
 class PDFParser(BaseDocumentParser):
     """PDF document parser implementation.

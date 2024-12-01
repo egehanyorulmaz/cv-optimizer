@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
-from cv_optimizer.core.domain.constants import PROJECT_ROOT
+from src.core.domain.constants import PROJECT_ROOT
 
 @dataclass
 class TemplateConfig:
@@ -16,7 +16,7 @@ class TemplateConfig:
     def default(cls) -> "TemplateConfig":
         """Create default template configuration"""
         return cls(
-            templates_dir=PROJECT_ROOT / "src/cv_optimizer/templates",
+            templates_dir=PROJECT_ROOT / "src/templates",
             cache_enabled=True,
             cache_ttl=3600,
             default_encoding='utf-8',

@@ -2,9 +2,9 @@ from typing import List
 import os
 from dotenv import load_dotenv
 import openai
-from cv_optimizer.core.ports.ai_provider import AIProvider, AIOptions
-from cv_optimizer.infrastructure.ai_providers.exceptions import AIProviderError
-from cv_optimizer.core.domain.config import OpenAIConfig
+from src.core.ports.ai_provider import AIProvider, AIOptions
+from src.infrastructure.ai_providers.exceptions import AIProviderError
+from src.core.domain.config import OpenAIConfig
 
 
 class OpenAIProvider(AIProvider):
