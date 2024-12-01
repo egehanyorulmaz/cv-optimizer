@@ -26,6 +26,8 @@ jobs:
         python -m pip install --upgrade pip
         # Install development dependencies
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+        # Install package in development mode
+        pip install -e .
 
     - name: Run tests
       run: |
