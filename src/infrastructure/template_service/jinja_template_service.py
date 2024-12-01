@@ -1,10 +1,11 @@
 from typing import Any
 import logging
-from jinja2 import Environment, FileSystemLoader, select_autoescape, TemplateNotFound
+from jinja2 import Environment, FileSystemLoader
+import jinja2
 
-from cv_optimizer.core.ports.template_service import TemplateService
-from cv_optimizer.core.domain.config import TemplateConfig
-from cv_optimizer.infrastructure.template_service.exceptions import TemplateNotFoundError, TemplateRenderError
+from src.core.ports.template_service import TemplateService
+from src.core.domain.config import TemplateConfig
+from src.infrastructure.template_service.exceptions import TemplateNotFoundError, TemplateRenderError
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +55,7 @@ class JinjaTemplateService(TemplateService):
         try:
             template = self._env.get_template(template_name)
             return template.render(**kwargs)
-        except FileNotFoundError as e:
+        except jinja2.exceptions.TemplateNotFound as e:
             search_paths = [str(path) for path in self._env.loader.searchpath]
             raise TemplateNotFoundError(template_name, search_paths) from e
         except Exception as e:

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 from typing import Protocol, List, Any, Optional
-from cv_optimizer.core.domain.resume import Resume
+from src.core.domain.resume import Resume
 
 
 class AgentType(Enum):

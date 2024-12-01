@@ -1,7 +1,7 @@
 from typing import Protocol, Union
 from abc import abstractmethod
 from pathlib import Path
-from cv_optimizer.core.domain.resume import Resume
+from src.core.domain.resume import Resume
 
 
 class DocumentParser(Protocol):
