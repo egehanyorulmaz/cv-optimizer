@@ -3,7 +3,7 @@ import logging
 from jinja2 import Environment, FileSystemLoader
 import jinja2
 
-from src.core.ports.template_service import TemplateService
+from src.core.ports.secondary.template_service import TemplateService
 from src.core.domain.config import TemplateConfig
 from src.infrastructure.template_service.exceptions import TemplateNotFoundError, TemplateRenderError
 

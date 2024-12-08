@@ -2,7 +2,7 @@ from typing import List
 import os
 from dotenv import load_dotenv
 import openai
-from src.core.ports.ai_provider import AIProvider, AIOptions
+from src.core.ports.secondary.ai_provider import AIProvider, AIOptions
 from src.infrastructure.ai_providers.exceptions import AIProviderError
 from src.core.domain.config import OpenAIConfig
 
@@ -49,7 +49,7 @@ class OpenAIProvider(AIProvider):
         :raises AIProviderError: If API call fails.
         """
         # Use prompt-specific options if provided, otherwise use global options
-        options_to_use = prompt_specific_options if prompt_specific_options is not None else self.global_options
+        options_to_use = prompt_specific_options if prompt_specific_options else self.global_options
         
         try:
             response = await self.client.chat.completions.create(
@@ -61,25 +61,3 @@ class OpenAIProvider(AIProvider):
             return response.choices[0].message.content
         except Exception as e:
             raise AIProviderError(f"OpenAI API error: {str(e)}")
-
-    async def embed(self, text: str) -> List[float]:
-        """
-        Generate embeddings using OpenAI API.
-        
-        :param text: Input text
-        :type text: str
-        :return: Text embedding vector
-        :rtype: List[float]
-        :raises AIProviderError: If API call fails or text is too long
-        """
-        if len(text) > 8000:
-            raise AIProviderError("Text too long for embedding")
-            
-        try:
-            response = await self.client.embeddings.create(
-                model="text-embedding-ada-002",
-                input=text
-            )
-            return response.data[0].embedding
-        except Exception as e:
-            raise AIProviderError(f"OpenAI embedding error: {str(e)}")
