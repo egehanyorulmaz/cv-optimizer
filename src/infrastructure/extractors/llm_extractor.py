@@ -4,9 +4,9 @@ import json
 import re
 
 from src.core.domain.resume import Resume
-from src.core.ports.ai_provider import AIProvider, AIOptions
-from src.core.ports.template_service import TemplateService
-from src.infrastructure.template_service.jinja_template_service import JinjaTemplateService
+from src.core.ports.secondary.ai_provider import AIProvider, AIOptions
+from src.core.ports.secondary.template_service import TemplateService
+from src.infrastructure.template.jinja_template_service import JinjaTemplateService
 from src.infrastructure.ai_providers.openai_provider import OpenAIProvider
 from src.core.domain.config import OpenAIConfig, TemplateConfig
 from src.infrastructure.parsers.pdf_parser import PDFParser
