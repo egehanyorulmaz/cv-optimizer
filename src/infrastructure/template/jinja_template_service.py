@@ -5,7 +5,7 @@ import jinja2
 
 from src.core.ports.secondary.template_service import TemplateService
 from src.core.domain.config import TemplateConfig
-from src.infrastructure.template_service.exceptions import TemplateNotFoundError, TemplateRenderError
+from src.infrastructure.template.exceptions import TemplateNotFoundError, TemplateRenderError
 
 logger = logging.getLogger(__name__)
 

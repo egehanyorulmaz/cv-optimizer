@@ -1,8 +1,8 @@
 import pytest
 from pathlib import Path
 from src.core.domain.config import TemplateConfig
-from src.infrastructure.template_service.jinja_template_service import JinjaTemplateService
-from src.infrastructure.template_service.exceptions import (
+from src.infrastructure.template.jinja_template_service import JinjaTemplateService
+from src.infrastructure.template.exceptions import (
     TemplateNotFoundError,
     TemplateRenderError,
 )
