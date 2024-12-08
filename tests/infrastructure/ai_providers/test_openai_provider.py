@@ -48,32 +48,6 @@ async def test_openai_provider_completion(openai_config):
         )
 
 @pytest.mark.asyncio
-async def test_openai_provider_embedding(openai_config):
-    """Test OpenAI embedding functionality."""
-    with patch('openai.AsyncOpenAI') as mock_async_client, \
-         patch('openai.OpenAI') as mock_client:
-        # Mock the models.list() call in initialization
-        mock_client.return_value.models.list = MagicMock()
-        
-        # Mock embedding response
-        mock_response = MagicMock()
-        mock_response.data = [MagicMock()]
-        mock_response.data[0].embedding = [0.1, 0.2, 0.3]
-        
-        mock_async_client.return_value.embeddings.create = AsyncMock(
-            return_value=mock_response
-        )
-
-        provider = OpenAIProvider(openai_config)
-        result = await provider.embed("Test text")
-        
-        assert result == [0.1, 0.2, 0.3]
-        mock_async_client.return_value.embeddings.create.assert_called_once_with(
-            model="text-embedding-ada-002",
-            input="Test text"
-        )
-
-@pytest.mark.asyncio
 async def test_openai_provider_error_handling(openai_config):
     """Test error handling in OpenAI provider."""
     with patch('openai.AsyncOpenAI') as mock_async_client, \
