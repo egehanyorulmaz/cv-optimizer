@@ -1,5 +1,5 @@
 import pytest
-from src.infrastructure.template_service.exceptions import (
+from src.infrastructure.template.exceptions import (
     TemplateError,
     TemplateNotFoundError,
     TemplateRenderError,
