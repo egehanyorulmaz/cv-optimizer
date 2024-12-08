@@ -16,7 +16,7 @@ class TemplateConfig:
     def default(cls) -> "TemplateConfig":
         """Create default template configuration"""
         return cls(
-            templates_dir=PROJECT_ROOT / "src/infrastructure/template_service/templates",
+            templates_dir=PROJECT_ROOT / "src/infrastructure/template/templates",
             cache_enabled=True,
             cache_ttl=3600,
             default_encoding='utf-8',
@@ -44,7 +44,7 @@ class TemplateConfig:
 @dataclass
 class AIProviderConfig:
     model_name: str = "gpt-4o"
-    temperature: float = 0.7
+    temperature: float = 0.1
     max_tokens: Optional[int] = None
 
 @dataclass
