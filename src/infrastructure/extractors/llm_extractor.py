@@ -126,6 +126,7 @@ if __name__ == "__main__":
     from src.core.domain.config import AIProviderConfig, TemplateConfig
     from src.infrastructure.template.jinja_template_service import JinjaTemplateService
     from src.core.domain.resume import Resume
+    from src.core.domain.job_description import JobDescription
     import asyncio
     from src.core.domain.constants import TEST_FILE_PATH
 
@@ -134,8 +135,8 @@ if __name__ == "__main__":
         template_config = TemplateConfig.development()
         extractor = LLMStructuredExtractor(ai_provider=OpenAIProvider(config=ai_config), 
                                            template_service=JinjaTemplateService(config=template_config), 
-                                           output_model=Resume, 
-                                           template_path="prompts/parsing/resume_extractor.j2")
+                                           output_model=JobDescription, 
+                                           template_path="prompts/parsing/job_description_extractor.j2")
         print(await extractor.parse(TEST_FILE_PATH))
 
     asyncio.run(main())

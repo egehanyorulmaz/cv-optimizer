@@ -1,0 +1,157 @@
+Your task is to extract key information from a job description and structure it into a JSON object that conforms to a predefined schema. You must adhere to the specified data types and formats.
+
+### Input Job Description ###
+
+{{ input_text }}
+
+### Extraction Rules ###
+
+1. **Company Name:** Extract the full name of the company offering the job. If the company name is not explicitly stated, use an empty string "".
+2. **Title:** Extract the exact job title as it appears in the description.
+3. **Location:** Identify the location of the job. This could be a city, state, country, or "Remote". If multiple locations are mentioned, list them all. If no location is specified, use an empty string "".
+4. **Description:** Provide a concise summary of the job's responsibilities and purpose.
+5. **Benefits:**
+    *   Identify specific job benefits offered.
+    *   Classify each benefit into one of the following types: "health_insurance", "retirement_fund", "stock_options", "bonus", or "other".
+    *   If a benefit type doesn't fit the predefined categories, use "other".
+    *   Provide a brief description of each benefit.
+    *   If no benefits are mentioned, return an empty list \[\].
+6. **Tech Stack:**
+    *   List the technologies, programming languages, frameworks, and tools mentioned in the job description.
+    *   Provide a brief description of how each technology is used or the context in which it is mentioned.
+    *   If no technologies are mentioned, return an empty list \[\].
+7. **Requirements:**
+    *   Identify the required and preferred skills, qualifications, and experience.
+    *   Classify each requirement as either "required" or "nice\_to\_have".
+    *   If a requirement's type is not explicitly stated, infer it from the context (e.g., "must have" implies "required").
+    *   Provide a brief description of each requirement.
+    *   If no requirements are mentioned, return an empty list \[\].
+8. **Edge Cases:**
+    *   **Ambiguous Information:** If the job description is unclear or information is presented in an unusual format, make a reasonable interpretation based on the available context.
+    *   **Missing Information:** If a particular field is not mentioned in the job description, use an empty string "" for strings, or an empty list \[ ] for lists. Do not make assumptions or add information not present in the text.
+9. **Output Format:**
+    *   Strictly adhere to the JSON format provided below.
+    *   Ensure all fields are present, even if they are empty.
+    *   Return a valid JSON object only.
+
+### Expected Output Format ###
+json
+{
+    "company_name": "",
+    "title": "",
+    "location": "",
+    "description": "",
+    "benefits": [
+        {
+            "benefit_type": "",
+            "benefit_description": ""
+        }
+    ],
+    "tech_stack": [
+        {
+            "tech_type": "",
+            "tech_description": ""
+        }
+    ],
+    "requirements": [
+        {
+            "requirement_type": "",
+            "requirement_description": ""
+        }
+    ]
+}
+
+
+### Example Input ###
+
+Senior Backend Engineer
+
+About the job
+
+At Acme Inc, our mission is to organize the world's information and make it universally accessible and useful. We're looking for a Senior Backend Engineer to join our Search team in Mountain View, CA.
+
+Responsibilities:
+
+*   Design, develop, test, deploy, maintain, and improve software.
+*   Manage individual project priorities, deadlines, and deliverables.
+
+Minimum qualifications:
+
+*   Bachelor's degree in Computer Science, similar technical field of study, or equivalent practical experience.
+*   5 years of professional experience in software development.
+*   Experience programming in Python or Go.
+
+Preferred qualifications:
+
+*   Master's degree or PhD in Computer Science or related technical field.
+*   Experience with large-scale distributed systems.
+*   Experience with Kubernetes.
+
+Benefits:
+
+*   Comprehensive health insurance (medical, dental, vision).
+*   401(k) retirement plan with company match.
+*   Employee stock purchase plan.
+
+### Example Output ###
+json
+{
+    "company_name": "Acme Inc",
+    "title": "Senior Backend Engineer",
+    "location": "Mountain View, CA",
+    "description": "Design, develop, test, deploy, maintain, and improve software. Manage individual project priorities, deadlines, and deliverables.",
+    "benefits": [
+        {
+            "benefit_type": "health_insurance",
+            "benefit_description": "Comprehensive health insurance (medical, dental, vision)."
+        },
+        {
+            "benefit_type": "retirement_fund",
+            "benefit_description": "401(k) retirement plan with company match."
+        },
+        {
+            "benefit_type": "stock_options",
+            "benefit_description": "Employee stock purchase plan."
+        }
+    ],
+    "tech_stack": [
+    {
+        "tech_type": "Python",
+        "tech_description": "Programming language for software development."
+    },
+    {
+        "tech_type": "Go",
+        "tech_description": "Programming language for software development."
+    },
+    {
+        "tech_type": "Kubernetes",
+        "tech_description": "Used in large-scale distributed systems."
+    }
+    ],
+    "requirements": [
+        {
+            "requirement_type": "required",
+            "requirement_description": "Bachelor's degree in Computer Science, similar technical field of study, or equivalent practical experience."
+        },
+        {
+            "requirement_type": "required",
+            "requirement_description": "5 years of professional experience in software development."
+        },
+        {
+            "requirement_type": "required",
+            "requirement_description": "Experience programming in Python or Go."
+        },
+        {
+            "requirement_type": "nice_to_have",
+            "requirement_description": "Master's degree or PhD in Computer Science or related technical field."
+        },
+        {
+            "requirement_type": "nice_to_have",
+            "requirement_description": "Experience with large-scale distributed systems."
+        },
+        {
+            "requirement_type": "nice_to_have",
+            "requirement_description": "Experience with Kubernetes."
+        }
+    ]
+}
