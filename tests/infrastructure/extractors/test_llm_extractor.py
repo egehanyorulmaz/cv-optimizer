@@ -20,12 +20,15 @@ def mock_openai_setup():
     """
     # Define expected prompts for different templates
     template_prompts = {
-        "job_description": "Extract key information from a job description",  # Partial match from job_description_extractor.j2
-        "resume": "Extract the following information from this resume"  # Partial match from resume_extractor.j2
+        "job_description": "Extract key information from a job description",
+        "resume": "Extract the following information from this resume"
     }
     
-    with patch('openai.AsyncOpenAI') as mock_async_client, \
+    # Mock environment variables
+    with patch.dict('os.environ', {'OPENAI_API_KEY': 'test-key'}), \
+         patch('openai.AsyncOpenAI') as mock_async_client, \
          patch('openai.OpenAI') as mock_client:
+        
         # Mock the models.list() call in initialization
         mock_client.return_value.models.list = MagicMock()
         
