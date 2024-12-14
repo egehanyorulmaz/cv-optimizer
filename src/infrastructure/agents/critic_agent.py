@@ -4,7 +4,7 @@ from src.core.domain.agents import (
     AgentType,
     OptimizationContext,
 )
-from src.core.ports.ai_provider import AIProvider, AIOptions
+from src.core.ports.secondary.ai_provider import AIProvider, AIOptions
 from typing import List
 
 
