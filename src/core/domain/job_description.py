@@ -8,6 +8,7 @@ class JobBenefit(BaseModel):
 class TechStack(BaseModel):
     tech_type: str
     tech_description: str
+    priority: Literal["required", "nice_to_have"]
 
 class JobRequirement(BaseModel):
     requirement_type: Literal["required", "nice_to_have"]
