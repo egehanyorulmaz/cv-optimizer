@@ -166,3 +166,4 @@ cython_debug/
 
 # ignore any pdf file under the root directory
 *.pdf
+!sample*.pdf
