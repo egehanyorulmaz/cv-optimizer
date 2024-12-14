@@ -20,6 +20,28 @@ Your task is to extract key information from a job description and structure it 
     *   List the technologies, programming languages, frameworks, and tools mentioned in the job description.
     *   Provide a brief description of how each technology is used or the context in which it is mentioned.
     *   If no technologies are mentioned, return an empty list \[\].
+    *   When multiple technologies are mentioned together:
+        - If they are presented as alternatives (using "or"), choose the one that:
+            * Appears most frequently in the job description
+            * Is mentioned first in the list
+            * Is more closely aligned with other required technologies
+        - If they are complementary (using "and"), list them separately
+        - If they are part of the same technology stack (e.g., "TensorFlow/Keras"), list the primary technology
+    *   Determine the priority of each technology:
+        - Mark as "required" if:
+            * It's explicitly listed as required
+            * It's mentioned in core job responsibilities
+            * It's listed under minimum qualifications
+            * It's the primary technology in a group of alternatives
+            * If it's mentioned with Strong background in XXX
+        - Mark as "nice_to_have" if:
+            * It's listed under preferred qualifications
+            * It's mentioned as an alternative
+            * It's part of optional skills
+    *   For each technology, include context about:
+        - Whether it's a primary or alternative choice
+        - Its relationship to other technologies
+        - Its specific use case in the role
 7. **Requirements:**
     *   Identify the required and preferred skills, qualifications, and experience.
     *   Classify each requirement as either "required" or "nice\_to\_have".
@@ -50,7 +72,8 @@ json
     "tech_stack": [
         {
             "tech_type": "",
-            "tech_description": ""
+            "tech_description": "",
+            "priority": "" # Either "required" or "nice_to_have"
         }
     ],
     "requirements": [
@@ -117,15 +140,18 @@ json
     "tech_stack": [
     {
         "tech_type": "Python",
-        "tech_description": "Programming language for software development."
+        "tech_description": "Programming language for software development.",
+        "priority": "required"
     },
     {
         "tech_type": "Go",
-        "tech_description": "Programming language for software development."
+        "tech_description": "Programming language for software development.",
+        "priority": "required"
     },
     {
         "tech_type": "Kubernetes",
-        "tech_description": "Used in large-scale distributed systems."
+        "tech_description": "Used in large-scale distributed systems.",
+        "priority": "nice_to_have"
     }
     ],
     "requirements": [
