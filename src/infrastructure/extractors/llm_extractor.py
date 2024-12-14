@@ -128,7 +128,7 @@ if __name__ == "__main__":
     from src.core.domain.resume import Resume
     from src.core.domain.job_description import JobDescription
     import asyncio
-    from src.core.domain.constants import TEST_FILE_PATH
+    from src.core.domain.constants import TEST_RESUME_FILE_PATH, TEST_JOB_DESCRIPTION_FILE_PATH
 
     async def main():
         ai_config = AIProviderConfig()
@@ -137,6 +137,7 @@ if __name__ == "__main__":
                                            template_service=JinjaTemplateService(config=template_config), 
                                            output_model=JobDescription, 
                                            template_path="prompts/parsing/job_description_extractor.j2")
-        print(await extractor.parse(TEST_FILE_PATH))
+        parsed_data = await extractor.parse(TEST_JOB_DESCRIPTION_FILE_PATH)
+        print(parsed_data.model_dump_json(indent=4))
 
     asyncio.run(main())
