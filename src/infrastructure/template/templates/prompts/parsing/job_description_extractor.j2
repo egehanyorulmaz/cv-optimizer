@@ -9,14 +9,24 @@ Your task is to extract key information from a job description and structure it 
 1. **Company Name:** Extract the full name of the company offering the job. If the company name is not explicitly stated, use an empty string "".
 2. **Title:** Extract the exact job title as it appears in the description.
 3. **Location:** Identify the location of the job. This could be a city, state, country, or "Remote". If multiple locations are mentioned, list them all. If no location is specified, use an empty string "".
-4. **Description:** Provide a concise summary of the job's responsibilities and purpose.
-5. **Benefits:**
+4. **Work Arrangement:**
+    * Identify if the job specifies remote, hybrid, or in-office work
+    * If explicitly stated, classify as:
+        - "remote" for fully remote positions
+        - "hybrid" for mixed remote/office arrangements
+        - "in_office" for fully office-based positions
+    * If not explicitly stated:
+        - Set work_arrangement to null
+        - Do not make assumptions about the work arrangement type
+    * Include any relevant details about schedule, office visits, or time zone requirements in the description
+5. **Description:** Provide a concise summary of the job's responsibilities and purpose.
+6. **Benefits:**
     *   Identify specific job benefits offered.
     *   Classify each benefit into one of the following types: "health_insurance", "retirement_fund", "stock_options", "bonus", or "other".
     *   If a benefit type doesn't fit the predefined categories, use "other".
     *   Provide a brief description of each benefit.
     *   If no benefits are mentioned, return an empty list \[\].
-6. **Tech Stack:**
+7. **Tech Stack:**
     *   List the technologies, programming languages, frameworks, and tools mentioned in the job description.
     *   Provide a brief description of how each technology is used or the context in which it is mentioned.
     *   If no technologies are mentioned, return an empty list \[\].
@@ -38,20 +48,22 @@ Your task is to extract key information from a job description and structure it 
             * It's listed under preferred qualifications
             * It's mentioned as an alternative
             * It's part of optional skills
-    *   For each technology, include context about:
+    *   For each technology, include:
         - Whether it's a primary or alternative choice
         - Its relationship to other technologies
         - Its specific use case in the role
-7. **Requirements:**
+        - Required years of experience if specified (as a number), or null if not specified
+8. **Requirements:**
     *   Identify the required and preferred skills, qualifications, and experience.
     *   Classify each requirement as either "required" or "nice\_to\_have".
     *   If a requirement's type is not explicitly stated, infer it from the context (e.g., "must have" implies "required").
+    *   Years of experience should be a number, or null if not specified. +5, +7, +10, etc. years must be converted to a number.
     *   Provide a brief description of each requirement.
     *   If no requirements are mentioned, return an empty list \[\].
-8. **Edge Cases:**
+9. **Edge Cases:**
     *   **Ambiguous Information:** If the job description is unclear or information is presented in an unusual format, make a reasonable interpretation based on the available context.
     *   **Missing Information:** If a particular field is not mentioned in the job description, use an empty string "" for strings, or an empty list \[ ] for lists. Do not make assumptions or add information not present in the text.
-9. **Output Format:**
+10. **Output Format:**
     *   Strictly adhere to the JSON format provided below.
     *   Ensure all fields are present, even if they are empty.
     *   Return a valid JSON object only.
@@ -63,6 +75,15 @@ json
     "title": "",
     "location": "",
     "description": "",
+    "salary_range": {
+        "min": 0.0,
+        "max": 0.0,
+        "currency": ""
+    },
+    "work_arrangement": {
+        "work_arrangement_type": "", # "remote", "hybrid", "in_office" or null
+        "work_arrangement_description": ""
+    },
     "benefits": [
         {
             "benefit_type": "",
@@ -73,12 +94,14 @@ json
         {
             "tech_type": "",
             "tech_description": "",
-            "priority": "" # Either "required" or "nice_to_have"
+            "required_years_of_experience": null, # number or null
+            "priority": "" # "required" or "nice_to_have"
         }
     ],
     "requirements": [
         {
-            "requirement_type": "",
+            "requirement_type": "", # "required" or "nice_to_have"
+            "required_years_of_experience": null, # number or null
             "requirement_description": ""
         }
     ]
@@ -87,97 +110,193 @@ json
 
 ### Example Input ###
 
-Senior Backend Engineer
+Senior Machine Learning Engineer / AI Developer
 
-About the job
+About Us:
+TechVision AI (a subsidiary of Global Innovations Corp.) is revolutionizing the healthcare industry through cutting-edge AI solutions. We're seeking an exceptional Senior ML Engineer to join our Healthcare AI division, with flexibility to work from our offices in Boston, MA / San Francisco, CA, or remotely for US-based candidates (hybrid options available with 2 days/week in office).
 
-At Acme Inc, our mission is to organize the world's information and make it universally accessible and useful. We're looking for a Senior Backend Engineer to join our Search team in Mountain View, CA.
+Base Salary Range: $150,000 - $220,000 USD annually + Competitive Benefits Package
 
-Responsibilities:
+Core Responsibilities:
+* Lead the development and deployment of production-ready machine learning models
+* Collaborate with cross-functional teams to identify and implement AI solutions
+* Mentor junior team members and contribute to architectural decisions
+* Optimize model performance and ensure scalability of ML systems
 
-*   Design, develop, test, deploy, maintain, and improve software.
-*   Manage individual project priorities, deadlines, and deliverables.
+Required Qualifications:
+* Master's degree in Computer Science, Machine Learning, or related field (Ph.D. preferred)
+* 7+ years of hands-on experience in machine learning and software development
+* Strong background in PyTorch or TensorFlow/Keras (must know at least one framework deeply)
+* Expertise in Python and experience with either Java/Scala for production systems
+* Track record of deploying ML models to production using MLOps practices
 
-Minimum qualifications:
+Nice-to-Have Skills:
+* Experience with AWS/GCP/Azure ML services
+* Knowledge of React.js/Node.js for full-stack development
+* Background in healthcare or medical imaging
+* Familiarity with Kubernetes/Docker and CI/CD pipelines
+* Experience with distributed computing frameworks (Spark/Dask)
 
-*   Bachelor's degree in Computer Science, similar technical field of study, or equivalent practical experience.
-*   5 years of professional experience in software development.
-*   Experience programming in Python or Go.
+Benefits & Perks:
+* Comprehensive health, dental, and vision coverage (100% premium covered)
+* 401(k) with 6% company match
+* Annual performance bonus (up to 20% of base salary)
+* Stock options and RSU grants
+* $5,000 annual learning & development budget
+* Flexible PTO policy
+* Monthly wellness stipend ($100)
+* Home office setup allowance ($2,500)
 
-Preferred qualifications:
+Work Environment:
+We offer a flexible hybrid arrangement. Remote employees must be available during core hours (10 AM - 3 PM EST) and should expect to travel to our Boston or SF office quarterly for team meetings. Hybrid employees can choose which 2 days to work from the office.
 
-*   Master's degree or PhD in Computer Science or related technical field.
-*   Experience with large-scale distributed systems.
-*   Experience with Kubernetes.
-
-Benefits:
-
-*   Comprehensive health insurance (medical, dental, vision).
-*   401(k) retirement plan with company match.
-*   Employee stock purchase plan.
+Tech Stack:
+* Primary ML Framework: PyTorch (required), TensorFlow (nice-to-have)
+* Programming: Python (required), Java/Scala (at least one required)
+* Cloud: AWS SageMaker and EC2 (required), GCP (nice-to-have)
+* MLOps: Docker, Kubernetes, Jenkins, GitLab CI
+* Monitoring: Prometheus/Grafana
+* Data Processing: Spark, Kafka
 
 ### Example Output ###
 json
 {
-    "company_name": "Acme Inc",
-    "title": "Senior Backend Engineer",
-    "location": "Mountain View, CA",
-    "description": "Design, develop, test, deploy, maintain, and improve software. Manage individual project priorities, deadlines, and deliverables.",
+    "company_name": "TechVision AI",
+    "title": "Senior Machine Learning Engineer / AI Developer",
+    "location": "Boston, MA / San Francisco, CA",
+    "description": "Lead the development and deployment of production-ready machine learning models in the healthcare industry, collaborate with cross-functional teams, mentor junior members, and optimize ML systems performance and scalability.",
+    "salary_range": {
+        "min": 150000.0,
+        "max": 220000.0,
+        "currency": "USD"
+    },
+    "work_arrangement": {
+        "work_arrangement_type": "hybrid",
+        "work_arrangement_description": "Flexible hybrid arrangement with 2 days/week in office. Remote employees must be available during core hours (10 AM - 3 PM EST) with quarterly office visits."
+    },
     "benefits": [
         {
             "benefit_type": "health_insurance",
-            "benefit_description": "Comprehensive health insurance (medical, dental, vision)."
+            "benefit_description": "Comprehensive health, dental, and vision coverage (100% premium covered)"
         },
         {
             "benefit_type": "retirement_fund",
-            "benefit_description": "401(k) retirement plan with company match."
+            "benefit_description": "401(k) with 6% company match"
+        },
+        {
+            "benefit_type": "bonus",
+            "benefit_description": "Annual performance bonus up to 20% of base salary"
         },
         {
             "benefit_type": "stock_options",
-            "benefit_description": "Employee stock purchase plan."
+            "benefit_description": "Stock options and RSU grants"
+        },
+        {
+            "benefit_type": "other",
+            "benefit_description": "$5,000 annual learning & development budget"
+        },
+        {
+            "benefit_type": "other",
+            "benefit_description": "Flexible PTO policy"
+        },
+        {
+            "benefit_type": "other",
+            "benefit_description": "Monthly wellness stipend ($100)"
+        },
+        {
+            "benefit_type": "other",
+            "benefit_description": "Home office setup allowance ($2,500)"
         }
     ],
     "tech_stack": [
-    {
-        "tech_type": "Python",
-        "tech_description": "Programming language for software development.",
-        "priority": "required"
-    },
-    {
-        "tech_type": "Go",
-        "tech_description": "Programming language for software development.",
-        "priority": "required"
-    },
-    {
-        "tech_type": "Kubernetes",
-        "tech_description": "Used in large-scale distributed systems.",
-        "priority": "nice_to_have"
-    }
+        {
+            "tech_type": "PyTorch",
+            "tech_description": "Primary ML framework for model development",
+            "required_years_of_experience": null,
+            "priority": "required"
+        },
+        {
+            "tech_type": "Python",
+            "tech_description": "Primary programming language for ML development",
+            "required_years_of_experience": null,
+            "priority": "required"
+        },
+        {
+            "tech_type": "AWS SageMaker",
+            "tech_description": "Cloud platform for ML model deployment",
+            "required_years_of_experience": null,
+            "priority": "required"
+        },
+        {
+            "tech_type": "Java/Scala",
+            "tech_description": "For production systems development",
+            "required_years_of_experience": null,
+            "priority": "required"
+        },
+        {
+            "tech_type": "TensorFlow",
+            "tech_description": "Alternative ML framework",
+            "required_years_of_experience": null,
+            "priority": "nice_to_have"
+        },
+        {
+            "tech_type": "Docker/Kubernetes",
+            "tech_description": "Container orchestration and deployment",
+            "required_years_of_experience": null,
+            "priority": "nice_to_have"
+        },
+        {
+            "tech_type": "Spark",
+            "tech_description": "Distributed computing framework",
+            "required_years_of_experience": null,
+            "priority": "nice_to_have"
+        }
     ],
     "requirements": [
         {
             "requirement_type": "required",
-            "requirement_description": "Bachelor's degree in Computer Science, similar technical field of study, or equivalent practical experience."
+            "required_years_of_experience": 7,
+            "requirement_description": "Hands-on experience in machine learning and software development"
         },
         {
             "requirement_type": "required",
-            "requirement_description": "5 years of professional experience in software development."
+            "required_years_of_experience": null,
+            "requirement_description": "Master's degree in Computer Science, Machine Learning, or related field"
         },
         {
             "requirement_type": "required",
-            "requirement_description": "Experience programming in Python or Go."
+            "required_years_of_experience": null,
+            "requirement_description": "Strong background in PyTorch or TensorFlow/Keras frameworks"
+        },
+        {
+            "requirement_type": "required",
+            "required_years_of_experience": null,
+            "requirement_description": "Expertise in Python and experience with Java/Scala for production systems"
+        },
+        {
+            "requirement_type": "required",
+            "required_years_of_experience": null,
+            "requirement_description": "Track record of deploying ML models to production using MLOps practices"
         },
         {
             "requirement_type": "nice_to_have",
-            "requirement_description": "Master's degree or PhD in Computer Science or related technical field."
+            "required_years_of_experience": null,
+            "requirement_description": "Experience with AWS/GCP/Azure ML services"
         },
         {
             "requirement_type": "nice_to_have",
-            "requirement_description": "Experience with large-scale distributed systems."
+            "required_years_of_experience": null,
+            "requirement_description": "Knowledge of React.js/Node.js for full-stack development"
         },
         {
             "requirement_type": "nice_to_have",
-            "requirement_description": "Experience with Kubernetes."
+            "required_years_of_experience": null,
+            "requirement_description": "Background in healthcare or medical imaging"
+        },
+        {
+            "requirement_type": "nice_to_have",
+            "required_years_of_experience": null,
+            "requirement_description": "Experience with distributed computing frameworks (Spark/Dask)"
         }
     ]
 }
