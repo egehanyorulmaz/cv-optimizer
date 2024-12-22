@@ -7,6 +7,7 @@ from src.core.ports.secondary.ai_provider import AIProvider, AIOptions
 from src.core.ports.secondary.template_service import TemplateService
 from src.infrastructure.parsers.base_parser import BaseDocumentParser
 from src.infrastructure.parsers.pdf_parser import PDFParser
+from src.infrastructure.utils.llm_utils import clean_llm_json_response
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -110,25 +111,18 @@ class LLMStructuredExtractor:
         :raises ValueError: If response cannot be parsed into the model
         """
         try:
-            # Clean up potential markdown formatting
-            response = response.strip()
-            if response.startswith('```json'):
-                response = response[7:]
-            if response.endswith('```'):
-                response = response[:-3]
-
-            return self._output_model.model_validate_json(response)
+            cleaned_response = clean_llm_json_response(response)
+            return self._output_model.model_validate_json(cleaned_response)
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON response: {str(e)}")
 
-if __name__ == "__main__":
+def extract_job_description():
     from src.infrastructure.ai_providers.openai_provider import OpenAIProvider
     from src.core.domain.config import AIProviderConfig, TemplateConfig
     from src.infrastructure.template.jinja_template_service import JinjaTemplateService
-    from src.core.domain.resume import Resume
     from src.core.domain.job_description import JobDescription
     import asyncio
-    from src.core.domain.constants import TEST_RESUME_FILE_PATH, TEST_JOB_DESCRIPTION_FILE_PATH
+    from src.core.domain.constants import TEST_JOB_DESCRIPTION_FILE_PATH
 
     async def main():
         ai_config = AIProviderConfig()
@@ -141,3 +135,29 @@ if __name__ == "__main__":
         print(parsed_data.model_dump_json(indent=4))
 
     asyncio.run(main())
+
+def extract_resume():
+    from src.infrastructure.ai_providers.openai_provider import OpenAIProvider
+    from src.core.domain.config import AIProviderConfig, TemplateConfig
+    from src.infrastructure.template.jinja_template_service import JinjaTemplateService
+    from src.core.domain.resume import Resume
+    import asyncio
+    from src.core.domain.constants import TEST_RESUME_FILE_PATH
+
+    async def main():
+        ai_config = AIProviderConfig()
+        template_config = TemplateConfig.development()
+        extractor = LLMStructuredExtractor(ai_provider=OpenAIProvider(config=ai_config), 
+                                           template_service=JinjaTemplateService(config=template_config), 
+                                           output_model=Resume, 
+                                           template_path="prompts/parsing/resume_extractor.j2")
+        parsed_data = await extractor.parse(TEST_RESUME_FILE_PATH)
+        print(parsed_data.model_dump_json(indent=4))
+
+    asyncio.run(main())
+
+
+if __name__ == "__main__":
+    extract_job_description()
+    print("-" * 100)
+    extract_resume()
