@@ -5,11 +5,12 @@ pii-data
 pii-extract-base
 presidio-analyzer
 presidio-anonymizer
-PyPDF2
+PyPDF2>=3.0.1
 pydantic==2.10.1
 pydantic-settings
-pypdf
 python-dateutil>=2.8.2
 python-dotenv
 spacy
 typing-extensions
+python-docx>=1.0.1
+requests>=2.31.0
