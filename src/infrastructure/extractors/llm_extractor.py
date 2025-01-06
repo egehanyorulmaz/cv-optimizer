@@ -95,6 +95,11 @@ class LLMStructuredExtractor:
             else:
                 raise ValueError(f"Unsupported file format: {content.suffix}")
         elif isinstance(content, bytes):
+            # For PDF content in bytes, use the PDF parser
+            if '.pdf' in self._supported_formats:
+                parser = self._parsers['.pdf']
+                return await parser.extract_text(content)
+            # For other types, try UTF-8 decode
             return content.decode('utf-8')
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
