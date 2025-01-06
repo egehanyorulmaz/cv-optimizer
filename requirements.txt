@@ -14,3 +14,4 @@ spacy
 typing-extensions
 python-docx>=1.0.1
 requests>=2.31.0
+reportlab>=4.1.0
