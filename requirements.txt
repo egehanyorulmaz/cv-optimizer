@@ -1,3 +1,5 @@
+langgraph==0.3.34
+langsmith==0.3.34
 openai
 pathlib
 pdfplumber>=0.10.3
