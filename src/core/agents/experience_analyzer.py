@@ -13,6 +13,8 @@ from src.core.domain.resume import Experience
 from src.core.domain.job_description import JobDescription
 from src.infrastructure.components import llm_extractor
 from langsmith import traceable
+from src.core.ports.secondary.llm_extractor import LLMExtractor
+
 logger = logging.getLogger("core.agents.experience_analyzer")
 
 @traceable(run_type="parser")
@@ -93,13 +95,18 @@ async def format_job_details_for_prompt(job: JobDescription) -> Dict[str, str]:
     }
 
 @traceable(run_type="parser")
-async def analyze_experience_node(state: AgentState) -> Dict[str, Optional[ExperienceAlignment]]:
+async def analyze_experience_node(
+    state: AgentState,
+    extractor: LLMExtractor
+) -> Dict[str, Optional[ExperienceAlignment]]:
     '''
     Analyzes the resume's experience section against the job description 
     using an LLM to determine alignment scores.
 
     :param state: The current state of the LangGraph execution.
     :type state: AgentState
+    :param extractor: The LLM extractor to use for structured output generation
+    :type extractor: LLMExtractor
     :return: A dictionary containing the updated ExperienceAlignment or None if analysis fails.
     :rtype: Dict[str, Optional[ExperienceAlignment]]
     '''
@@ -117,7 +124,7 @@ async def analyze_experience_node(state: AgentState) -> Dict[str, Optional[Exper
 
     try:
         # Call the LLM and parse the response
-        alignment = await llm_extractor.generate_structured_output(
+        alignment = await extractor.generate_structured_output(
             template_path="prompts/agents/experience_analyzer.j2",
             template_vars={"resume_experiences": experiences_text,
                           "job_description": job_description,
