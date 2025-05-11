@@ -5,11 +5,11 @@ import openai
 from src.core.ports.secondary.ai_provider import AIProvider, AIOptions
 from src.infrastructure.ai_providers.exceptions import AIProviderError
 from src.core.domain.config import OpenAIConfig
-
+from langsmith import traceable
+from langsmith.wrappers import wrap_openai
 
 class OpenAIProvider(AIProvider):
     """OpenAI implementation of the AI provider interface."""
-    
     def __init__(self, config: OpenAIConfig):
         """
         Initialize OpenAI provider with API key and global options.
@@ -24,7 +24,7 @@ class OpenAIProvider(AIProvider):
             raise AIProviderError("OpenAI API key not found. Set OPENAI_API_KEY environment variable.")
             
         try:
-            self.client = openai.AsyncOpenAI(api_key=self.api_key)
+            self.client = wrap_openai(openai.AsyncOpenAI(api_key=self.api_key))
             client = openai.OpenAI(api_key=self.api_key)
             client.models.list()
         except Exception as e:
