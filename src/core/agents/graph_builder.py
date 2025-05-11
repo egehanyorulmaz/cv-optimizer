@@ -12,6 +12,7 @@ from langgraph.graph import StateGraph, MessagesState, START, END
 from src.core.agents.utils.nodes import parse_resume_node, parse_job_description_node
 from src.core.agents.utils.state import AgentState
 import logging
+from src.infrastructure.components import llm_extractor
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("core.agents.graph_builder")
@@ -20,11 +21,11 @@ def build_resume_analysis_graph():
     workflow = StateGraph(AgentState)
     logger.info("Building workflow...")
 
-    workflow.add_node("parse_resume", parse_resume_node)
-    workflow.add_node("parse_job_description", parse_job_description_node)
+    workflow.add_node("parse_resume", lambda state: parse_resume_node(state, llm_extractor))
+    workflow.add_node("parse_job_description", lambda state: parse_job_description_node(state, llm_extractor))
 
     # Add nodes with injected dependencies
-    workflow.add_node("experience_analyzer", analyze_experience_node)
+    workflow.add_node("experience_analyzer", lambda state: analyze_experience_node(state, llm_extractor))
     
     # Connect nodes sequentially
     workflow.add_edge(START, "parse_resume")
