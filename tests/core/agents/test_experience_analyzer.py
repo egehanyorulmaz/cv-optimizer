@@ -11,7 +11,7 @@ from src.core.agents.experience_analyzer import calculate_years_experience, anal
 from src.core.domain.resume import Resume, Experience, ContactInfo, Education
 from src.core.domain.job_description import JobDescription, JobRequirement, TechStack
 from src.core.domain.resume_match import ExperienceAlignment
-
+from src.core.domain.reasoning import ReasonedAttribute
 # --- Fixtures --- 
 
 @pytest.fixture
@@ -110,10 +110,11 @@ def sample_state(sample_resume, sample_job_description):
 
 # --- Tests for calculate_years_experience --- 
 
-def test_calculate_years_experience_no_experience():
-    assert calculate_years_experience([]) == 0.0
+async def test_calculate_years_experience_no_experience():
+    actual_years = await calculate_years_experience([])
+    assert actual_years == 0.0
 
-def test_calculate_years_experience_single_job():
+async def test_calculate_years_experience_single_job():
     exp = [
         Experience(
             title="Dev", company="CompA", 
@@ -122,9 +123,10 @@ def test_calculate_years_experience_single_job():
             description=[], achievements=[]
         )
     ]
-    assert calculate_years_experience(exp) == pytest.approx(2.0, abs=0.01)
+    actual_years = await calculate_years_experience(exp)
+    assert actual_years == pytest.approx(2.0, abs=0.01)
 
-def test_calculate_years_experience_ongoing_job():
+async def test_calculate_years_experience_ongoing_job():
     start = datetime.now(pytz.UTC) - timedelta(days=365*3 + 5)
     exp = [
         Experience(
@@ -135,9 +137,10 @@ def test_calculate_years_experience_ongoing_job():
         )
     ]
     # Should be approx 3 years
-    assert calculate_years_experience(exp) == pytest.approx(3.0, abs=0.02)
+    actual_years = await calculate_years_experience(exp)
+    assert actual_years == pytest.approx(3.0, abs=0.02)
 
-def test_calculate_years_experience_non_overlapping():
+async def test_calculate_years_experience_non_overlapping():
     exp = [
         Experience(
             title="Dev1", company="CompA", 
@@ -153,9 +156,10 @@ def test_calculate_years_experience_non_overlapping():
         )
     ]
     # Total 3 years
-    assert calculate_years_experience(exp) == pytest.approx(3.0, abs=0.01)
+    actual_years = await calculate_years_experience(exp)
+    assert actual_years == pytest.approx(3.0, abs=0.01)
 
-def test_calculate_years_experience_overlapping():
+async def test_calculate_years_experience_overlapping():
     exp = [
         Experience(
             title="Dev1", company="CompA", 
@@ -172,9 +176,10 @@ def test_calculate_years_experience_overlapping():
     ]
     # Overlap is 1 year (Jan 2020 - Jan 2021)
     # Total unique duration is 3 years (Jan 2019 - Jan 2022)
-    assert calculate_years_experience(exp) == pytest.approx(3.0, abs=0.01)
+    actual_years = await calculate_years_experience(exp)
+    assert actual_years == pytest.approx(3.0, abs=0.01)
 
-def test_calculate_years_experience_multiple_overlaps_and_ongoing():
+async def test_calculate_years_experience_multiple_overlaps_and_ongoing():
     start_ongoing = datetime.now(pytz.UTC) - timedelta(days=365*1)
     exp = [
         Experience( # 2 years (2017-2019)
@@ -197,9 +202,10 @@ def test_calculate_years_experience_multiple_overlaps_and_ongoing():
         )
     ]
     # Unique periods: 2017-2020 (3 years) + ongoing (1 year) = 4 years
-    assert calculate_years_experience(exp) == pytest.approx(4.0, abs=0.02)
+    actual_years = await calculate_years_experience(exp)
+    assert actual_years == pytest.approx(4.0, abs=0.02)
 
-def test_calculate_years_experience_invalid_dates():
+async def test_calculate_years_experience_invalid_dates():
     # Experience ends before it starts - should be ignored
     exp = [
         Experience(
@@ -209,7 +215,8 @@ def test_calculate_years_experience_invalid_dates():
             description=[], achievements=[]
         )
     ]
-    assert calculate_years_experience(exp) == 0.0
+    actual_years = await calculate_years_experience(exp)
+    assert actual_years == 0.0
 
 # --- Updated Tests for analyze_experience_node --- 
 
@@ -217,15 +224,15 @@ def test_calculate_years_experience_invalid_dates():
 @pytest.mark.asyncio
 async def test_analyze_experience_node_success(mock_generate_output, sample_state):
     # Get the actual calculated years for the test fixture
-    actual_years = calculate_years_experience(sample_state["resume"].experiences)
+    actual_years = await calculate_years_experience(sample_state["resume"].experiences)
     
     # Setup expected alignment data
     expected_alignment = ExperienceAlignment(
-        years_overlap=actual_years,
-        role_similarity=0.85,
-        domain_relevance=0.7,
-        tech_stack_overlap=0.9,
-        leadership_alignment=0.8,
+        years_overlap=ReasonedAttribute(score=actual_years, reasoning="test"),
+        role_similarity=ReasonedAttribute(score=0.85, reasoning="test"),
+        domain_relevance=ReasonedAttribute(score=0.7, reasoning="test"),
+        tech_stack_overlap=ReasonedAttribute(score=0.9, reasoning="test"),
+        leadership_alignment=ReasonedAttribute(score=0.8, reasoning="test"),
         company_size_relevance=None
     )
     
@@ -238,11 +245,18 @@ async def test_analyze_experience_node_success(mock_generate_output, sample_stat
     # Assert the result contains the expected field
     assert "experience_alignment" in result
     
+    # The test is failing here, let's debug
+    print(f"Result: {result}")
+    alignment = result["experience_alignment"]
+    
+    # Check if alignment is None before asserting
+    if alignment is None:
+        assert False, "Experience alignment is None, but expected an ExperienceAlignment object"
+    
     # Assert the returned object is an ExperienceAlignment instance
-    assert isinstance(result["experience_alignment"], ExperienceAlignment)
+    assert isinstance(alignment, ExperienceAlignment)
     
     # Assert the values match our expected values
-    alignment = result["experience_alignment"]
     assert alignment.years_overlap == expected_alignment.years_overlap
     assert alignment.role_similarity == expected_alignment.role_similarity
     assert alignment.domain_relevance == expected_alignment.domain_relevance
