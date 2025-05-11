@@ -28,4 +28,3 @@ jobs:
         pytest
       env:
         TESTING: "true"
-        OPENAI_API_KEY: "test_key_for_ci"
