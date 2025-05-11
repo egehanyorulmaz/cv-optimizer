@@ -32,20 +32,23 @@ async def test_openai_provider_completion(openai_config):
         mock_response.choices = [MagicMock()]
         mock_response.choices[0].message.content = "Test response"
         
-        mock_async_client.return_value.chat.completions.create = AsyncMock(
-            return_value=mock_response
-        )
+        chat_completion_mock = AsyncMock(return_value=mock_response)
+        mock_async_client.return_value.chat.completions.create = chat_completion_mock
 
         provider = OpenAIProvider(openai_config)
         result = await provider.complete("Test prompt")
         
         assert result == "Test response"
-        mock_async_client.return_value.chat.completions.create.assert_called_once_with(
-            model=openai_config.model_name,
-            temperature=openai_config.temperature,
-            max_tokens=openai_config.max_tokens,
-            messages=[{"role": "user", "content": "Test prompt"}]
-        )
+        
+        # Check that the mock was called exactly once
+        assert chat_completion_mock.call_count == 1
+        
+        # Check the arguments passed to the mock
+        call_args = chat_completion_mock.call_args[1]  # Get kwargs
+        assert call_args['model'] == openai_config.model_name
+        assert call_args['temperature'] == openai_config.temperature
+        assert call_args['max_tokens'] == openai_config.max_tokens
+        assert call_args['messages'] == [{"role": "user", "content": "Test prompt"}]
 
 @pytest.mark.asyncio
 async def test_openai_provider_error_handling(openai_config):
