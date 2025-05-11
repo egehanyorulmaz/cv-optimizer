@@ -11,7 +11,7 @@ from src.core.agents.utils.state import AgentState
 from src.core.domain.resume_match import ExperienceAlignment
 from src.core.domain.resume import Experience
 from src.core.domain.job_description import JobDescription
-from src.infrastructure.components import llm_extractor
+from src.infrastructure.components import create_llm_extractor
 from langsmith import traceable
 from src.core.ports.secondary.llm_extractor import LLMExtractor
 
@@ -97,7 +97,7 @@ async def format_job_details_for_prompt(job: JobDescription) -> Dict[str, str]:
 @traceable(run_type="parser")
 async def analyze_experience_node(
     state: AgentState,
-    extractor: LLMExtractor
+    extractor: Optional[LLMExtractor] = None
 ) -> Dict[str, Optional[ExperienceAlignment]]:
     '''
     Analyzes the resume's experience section against the job description 
@@ -105,14 +105,18 @@ async def analyze_experience_node(
 
     :param state: The current state of the LangGraph execution.
     :type state: AgentState
-    :param extractor: The LLM extractor to use for structured output generation
-    :type extractor: LLMExtractor
+    :param extractor: The LLM extractor to use for structured output generation, created if None
+    :type extractor: LLMExtractor, optional
     :return: A dictionary containing the updated ExperienceAlignment or None if analysis fails.
     :rtype: Dict[str, Optional[ExperienceAlignment]]
     '''
     logger.info("--- Analyzing Experience Alignment (LLM) ---")
     resume = state['resume']
     job_description = state['job_description']
+    
+    # Use provided extractor or create one
+    if extractor is None:
+        extractor = create_llm_extractor()
     
     if not resume.experiences:
         logger.warning("No experience found in resume. Skipping experience analysis.")
