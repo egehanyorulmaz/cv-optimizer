@@ -1,0 +1,58 @@
+Analyze the candidate's work experience provided below in the context of the target job description. Your goal is to assess the alignment between the candidate's background and the job requirements based *only* on the provided experience entries and job details.
+
+**Resume Experiences:**
+{{ resume_experiences }}
+
+**Job Description:**
+Title: {{ job_description.job_title }}
+Location: {{ job_description.job_location }}
+Description:
+{{ job_description.job_description_text }}
+Tech Stack Relevant to Experience:
+{{ job_description.job_tech_stack }}
+Key Requirements Relevant to Experience:
+{{ job_description.job_requirements }}
+
+**Candidate's Total Calculated Years of Experience:** {{ total_years_experience }}
+
+**Instructions:**
+Evaluate the alignment based on the following criteria. Provide your assessment as a JSON object matching the specified format. Do not include explanations outside the JSON structure.
+
+**Output JSON Format:**
+{
+  "years_overlap": {
+    "score": float,
+    "reasoning": "string explanation"
+  },
+  "role_similarity": {
+    "score": float,
+    "reasoning": "string explanation"
+  },
+  "domain_relevance": {
+    "score": float,
+    "reasoning": "string explanation"
+  },
+  "tech_stack_overlap": {
+    "score": float,
+    "reasoning": "string explanation"
+  },
+  "leadership_alignment": {
+    "score": float | null,
+    "reasoning": "string explanation"
+  },
+  "company_size_relevance": {
+    "score": float | null,
+    "reasoning": "string explanation"
+  }
+}
+
+**Reasoning Guidelines (apply internally, output only JSON):**
+- `role_similarity`: Compare action verbs, responsibilities, project scopes in resume descriptions against the job description duties.
+- `domain_relevance`: Look for industry keywords, company descriptions (if inferrable), and project contexts.
+- `tech_stack_overlap`: Identify specific tools, languages, platforms mentioned in resume descriptions and compare against the job's tech stack list.
+- `leadership_alignment`: Search for keywords like 'led', 'managed', 'supervised', 'mentored', 'coordinated team', etc., and assess relevance to the target role's seniority/scope.
+- `company_size_relevance`: This is often hard to gauge; only score if there are clear indicators (e.g., "fast-paced startup environment" vs. "large enterprise systems"). Default to null if uncertain.
+
+Now, generate the JSON output based on your analysis of the provided texts.
+
+JSON Output:
