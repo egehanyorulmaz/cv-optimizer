@@ -8,7 +8,6 @@ from src.infrastructure.template.jinja_template_service import JinjaTemplateServ
 from src.core.domain.resume import Resume
 from src.infrastructure.extractors.llm_extractor import LLMStructuredExtractor
 from src.core.domain.constants import TEST_RESUME_FILE_PATH, TEST_JOB_DESCRIPTION_FILE_PATH
-from src.core.domain.job_description import JobDescription
 
 @pytest.fixture
 def mock_openai_setup():
