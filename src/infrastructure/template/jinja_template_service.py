@@ -34,7 +34,6 @@ class JinjaTemplateService(TemplateService):
             enable_async=False,
             auto_reload=config.auto_reload
         )
-        logger.info(f"Loaded templates: {self.get_template_names()}")
 
     def render_prompt(self, template_name: str, **kwargs: Any) -> str:
         """
