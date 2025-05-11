@@ -2,7 +2,7 @@
 Tests for the Experience Analyzer Agent.
 '''
 import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, AsyncMock
 from datetime import datetime, timedelta
 import pytz
 import json
@@ -108,12 +108,21 @@ def sample_state(sample_resume, sample_job_description):
         "job_description": sample_job_description
     }
 
+# Create a mock extractor for testing
+@pytest.fixture
+def mock_llm_extractor():
+    mock_extractor = MagicMock()
+    mock_extractor.generate_structured_output = AsyncMock()
+    return mock_extractor
+
 # --- Tests for calculate_years_experience --- 
 
+@pytest.mark.asyncio
 async def test_calculate_years_experience_no_experience():
     actual_years = await calculate_years_experience([])
     assert actual_years == 0.0
 
+@pytest.mark.asyncio
 async def test_calculate_years_experience_single_job():
     exp = [
         Experience(
@@ -126,6 +135,7 @@ async def test_calculate_years_experience_single_job():
     actual_years = await calculate_years_experience(exp)
     assert actual_years == pytest.approx(2.0, abs=0.01)
 
+@pytest.mark.asyncio
 async def test_calculate_years_experience_ongoing_job():
     start = datetime.now(pytz.UTC) - timedelta(days=365*3 + 5)
     exp = [
@@ -140,6 +150,7 @@ async def test_calculate_years_experience_ongoing_job():
     actual_years = await calculate_years_experience(exp)
     assert actual_years == pytest.approx(3.0, abs=0.02)
 
+@pytest.mark.asyncio
 async def test_calculate_years_experience_non_overlapping():
     exp = [
         Experience(
@@ -159,6 +170,7 @@ async def test_calculate_years_experience_non_overlapping():
     actual_years = await calculate_years_experience(exp)
     assert actual_years == pytest.approx(3.0, abs=0.01)
 
+@pytest.mark.asyncio
 async def test_calculate_years_experience_overlapping():
     exp = [
         Experience(
@@ -179,6 +191,7 @@ async def test_calculate_years_experience_overlapping():
     actual_years = await calculate_years_experience(exp)
     assert actual_years == pytest.approx(3.0, abs=0.01)
 
+@pytest.mark.asyncio
 async def test_calculate_years_experience_multiple_overlaps_and_ongoing():
     start_ongoing = datetime.now(pytz.UTC) - timedelta(days=365*1)
     exp = [
@@ -205,6 +218,7 @@ async def test_calculate_years_experience_multiple_overlaps_and_ongoing():
     actual_years = await calculate_years_experience(exp)
     assert actual_years == pytest.approx(4.0, abs=0.02)
 
+@pytest.mark.asyncio
 async def test_calculate_years_experience_invalid_dates():
     # Experience ends before it starts - should be ignored
     exp = [
@@ -220,9 +234,8 @@ async def test_calculate_years_experience_invalid_dates():
 
 # --- Updated Tests for analyze_experience_node --- 
 
-@patch('src.infrastructure.extractors.llm_extractor.LLMStructuredExtractor.generate_structured_output')
 @pytest.mark.asyncio
-async def test_analyze_experience_node_success(mock_generate_output, sample_state):
+async def test_analyze_experience_node_success(mock_llm_extractor, sample_state):
     # Get the actual calculated years for the test fixture
     actual_years = await calculate_years_experience(sample_state["resume"].experiences)
     
@@ -237,10 +250,10 @@ async def test_analyze_experience_node_success(mock_generate_output, sample_stat
     )
     
     # Mock the generate_structured_output method to return our expected alignment
-    mock_generate_output.return_value = expected_alignment
+    mock_llm_extractor.generate_structured_output.return_value = expected_alignment
     
-    # Call the function
-    result = await analyze_experience_node(sample_state)
+    # Call the function with the mock extractor
+    result = await analyze_experience_node(sample_state, mock_llm_extractor)
     
     # Assert the result contains the expected field
     assert "experience_alignment" in result
@@ -265,7 +278,7 @@ async def test_analyze_experience_node_success(mock_generate_output, sample_stat
     assert alignment.company_size_relevance == expected_alignment.company_size_relevance
 
 @pytest.mark.asyncio
-async def test_analyze_experience_node_empty_experiences(sample_state):
+async def test_analyze_experience_node_empty_experiences(sample_state, mock_llm_extractor):
     # Create a copy of the state to modify
     state = sample_state.copy()
     
@@ -275,33 +288,31 @@ async def test_analyze_experience_node_empty_experiences(sample_state):
     state["resume"] = modified_resume
     
     # Call the function with the modified state
-    result = await analyze_experience_node(state)
+    result = await analyze_experience_node(state, mock_llm_extractor)
     
     # Assert the result indicates no experience alignment was performed
     assert "experience_alignment" in result
     assert result["experience_alignment"] is None
 
-@patch('src.infrastructure.extractors.llm_extractor.LLMStructuredExtractor.generate_structured_output')
 @pytest.mark.asyncio
-async def test_analyze_experience_node_invalid_llm_response(mock_generate_output, sample_state):
+async def test_analyze_experience_node_invalid_llm_response(sample_state, mock_llm_extractor):
     # Mock generate_structured_output to raise an exception
-    mock_generate_output.side_effect = ValueError("Invalid JSON response")
+    mock_llm_extractor.generate_structured_output.side_effect = ValueError("Invalid JSON response")
     
     # Call the function
-    result = await analyze_experience_node(sample_state)
+    result = await analyze_experience_node(sample_state, mock_llm_extractor)
     
     # Assert that error handling works and returns None for experience_alignment
     assert "experience_alignment" in result
     assert result["experience_alignment"] is None
 
-@patch('src.infrastructure.extractors.llm_extractor.LLMStructuredExtractor.generate_structured_output')
 @pytest.mark.asyncio
-async def test_analyze_experience_node_missing_required_fields(mock_generate_output, sample_state):
+async def test_analyze_experience_node_missing_required_fields(sample_state, mock_llm_extractor):
     # Mock generate_structured_output to raise a validation error
-    mock_generate_output.side_effect = ValueError("Missing required fields")
+    mock_llm_extractor.generate_structured_output.side_effect = ValueError("Missing required fields")
     
     # Call the function
-    result = await analyze_experience_node(sample_state)
+    result = await analyze_experience_node(sample_state, mock_llm_extractor)
     
     # Assert that error handling works and returns None for experience_alignment
     assert "experience_alignment" in result
