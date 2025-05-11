@@ -126,9 +126,9 @@ async def analyze_experience_node(state: AgentState) -> Dict[str, Optional[Exper
         )
         
         # Validate years_overlap for consistency
-        if abs(alignment.years_overlap - total_years) > 0.01:
-            logger.warning(f"LLM years_overlap ({alignment.years_overlap}) doesn't match calculated {total_years}. Using calculated value.")
-            alignment.years_overlap = total_years
+        if abs(float(alignment.years_overlap.score) - total_years) > 0.01:
+            logger.warning(f"LLM years_overlap ({alignment.years_overlap.score}) doesn't match calculated {total_years}. Using calculated value.")
+            alignment.years_overlap.score = total_years
 
         logger.info(f"EXPERIENCE ANALYZER: Determined experience alignment: {alignment}")
         # Return the alignment results
