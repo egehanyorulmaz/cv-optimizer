@@ -12,9 +12,10 @@ CV Optimizer aims to democratize access to high-quality resume optimization usin
 - 🎯 Job description matching
 - ✍️ Smart content improvement suggestions
 - 🌍 Multi-format support (PDF, DOCX, TXT)
+- 🔄 Career development planning
 
 ## Architecture
-Built using hexagonal architecture principles, ensuring:
+Built using hexagonal architecture principles with a LangGraph-based workflow, ensuring:
 - Clean separation of concerns
 - Pluggable AI providers
 - Extensible agent system
@@ -26,7 +27,44 @@ This is a side project that I'm currently working on, but I intend to deliver an
 
 1. Clone the repository
 2. Create a virtual environment:
-3. Install dependencies
-4. Create a `.env.` file in the project root
-5. Configure your environment variables in `.env`
-6. Run tests to verify setup by running 'pytest' in your terminal
+   ```
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+4. Copy the example environment file:
+   ```
+   cp env.example .env
+   ```
+5. Configure your environment variables in `.env`:
+   - Add your OpenAI API key
+   - Set up LangSmith for tracing (optional)
+6. Run tests to verify setup:
+   ```
+   pytest
+   ```
+
+## LangGraph Flow
+
+The application uses LangGraph to create a workflow that analyzes resumes and job descriptions:
+
+1. Parse Resume → Parse Job Description → Experience Analyzer → ...
+
+More nodes will be added as development continues.
+
+## Development
+
+To contribute to the project:
+
+1. Set up the environment as described above
+2. Install development dependencies if not already included
+3. Follow the existing code style patterns
+4. Add tests for new functionality
+5. Ensure all existing tests pass
+
+## License
+
+[MIT License](LICENSE)
