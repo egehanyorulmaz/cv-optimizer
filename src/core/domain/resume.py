@@ -2,7 +2,7 @@ from typing import List, Optional
 from datetime import datetime
 from pydantic import BaseModel, field_validator, model_validator
 import json
-
+import pytz
 
 class ContactInfo(BaseModel):
     name: str
@@ -19,6 +19,25 @@ class Experience(BaseModel):
     end_date: Optional[datetime] = None
     description: List[str]
     achievements: List[str]
+
+    @model_validator(mode="after")
+    def ensure_utc_datetimes(self):
+        """
+        Ensures all datetimes are timezone-aware and in UTC.
+
+        :return: The validated Experience object
+        :rtype: Experience
+        """
+        for field in ["start_date", "end_date"]:
+            dt = getattr(self, field)
+            if dt is not None:
+                if dt.tzinfo is None:
+                    # Assume UTC for naive datetimes
+                    setattr(self, field, dt.replace(tzinfo=pytz.UTC))
+                else:
+                    # Convert to UTC if not already
+                    setattr(self, field, dt.astimezone(pytz.UTC))
+        return self
 
     @field_validator('end_date', mode='before')
     @classmethod
