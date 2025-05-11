@@ -5,10 +5,11 @@ from src.core.domain.resume import Resume
 from src.core.domain.job_description import JobDescription
 from src.infrastructure.components import llm_extractor
 from src.core.domain.constants import TEST_RESUME_FILE_PATH, TEST_JOB_DESCRIPTION_FILE_PATH
+from src.core.ports.secondary.llm_extractor import LLMExtractor
 
 @traceable(run_type="llm")
-async def parse_resume_node(state: AgentState):
-    resume = await llm_extractor.parse_document(
+async def parse_resume_node(state: AgentState, extractor: LLMExtractor):
+    resume = await extractor.parse_document(
         content=state["resume_path"],
         output_model=Resume,
         template_path="prompts/parsing/resume_extractor.j2"
@@ -17,8 +18,8 @@ async def parse_resume_node(state: AgentState):
 
 
 @traceable(run_type="llm")
-async def parse_job_description_node(state: AgentState):
-    job_description = await llm_extractor.parse_document(
+async def parse_job_description_node(state: AgentState, extractor: LLMExtractor):
+    job_description = await extractor.parse_document(
         content=state["job_description_path"],
         output_model=JobDescription,
         template_path="prompts/parsing/job_description_extractor.j2"
