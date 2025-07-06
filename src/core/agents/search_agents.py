@@ -69,6 +69,7 @@ async def search_company_info(company_name: str,
     """
     Search for up-to-date information about a company and return structured data.
     """
+    # TODO: Retry on OpenAI rate limit errors
     search_query = template_service.render_prompt(
         "prompts/company_search/search_query.j2",
         **{"company_name": company_name, "search_result_format": CompanySearchResponse.model_json_schema()}
