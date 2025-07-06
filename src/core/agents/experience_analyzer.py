@@ -11,7 +11,6 @@ from src.core.agents.utils.state import AgentState
 from src.core.domain.resume_match import ExperienceAlignment
 from src.core.domain.resume import Experience
 from src.core.domain.job_description import JobDescription
-from src.infrastructure.components import create_llm_extractor
 from langsmith import traceable
 from src.core.ports.secondary.llm_extractor import LLMExtractor
 
@@ -113,10 +112,6 @@ async def analyze_experience_node(
     logger.info("--- Analyzing Experience Alignment (LLM) ---")
     resume = state['resume']
     job_description = state['job_description']
-    
-    # Use provided extractor or create one
-    if extractor is None:
-        extractor = create_llm_extractor()
     
     if not resume.experiences:
         logger.warning("No experience found in resume. Skipping experience analysis.")
