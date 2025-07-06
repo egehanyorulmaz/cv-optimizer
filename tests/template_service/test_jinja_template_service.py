@@ -71,7 +71,7 @@ def test_successful_template_rendering(template_service):
     """
     result = template_service.render_prompt(
         "valid_template.j2",
-        **{"name": "World"}  # Use kwargs unpacking
+        **{"name": "World"}
     )
     assert result == "Hello World!"
 
