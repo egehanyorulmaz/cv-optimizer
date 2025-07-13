@@ -99,3 +99,7 @@ class Resume(BaseModel):
             return cls.model_validate_json(json_str)
         except json.JSONDecodeError as e:
             raise ValueError(f"Invalid JSON string: {str(e)}")
+
+    @property
+    def company_names(self) -> List[str]:
+        return [experience.company for experience in self.experiences]
