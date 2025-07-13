@@ -26,14 +26,29 @@ def build_resume_analysis_graph():
 
     # Use functools.partial to inject dependencies into the nodes
     workflow.add_node("parse_resume", partial(parse_resume_node, extractor=llm_extractor))
-    workflow.add_node("company_research", partial(search_company_info_node, template_service=template_service, model_name="gpt-4o"))
+    workflow.add_node("job_company_research", partial(search_company_info_node, 
+                                                      template_service=template_service, 
+                                                      branch="job_description",
+                                                      model_name="gpt-4.1-mini"))
+    workflow.add_node("resume_company_research", partial(search_company_info_node, 
+                                                         template_service=template_service, 
+                                                         branch="resume",
+                                                         model_name="gpt-4.1-mini"))
+
     workflow.add_node("parse_job_description", partial(parse_job_description_node, extractor=llm_extractor))
     workflow.add_node("experience_analyzer", partial(analyze_experience_node, extractor=llm_extractor))
-    # Connect nodes sequentially
+    
+    #### RESUME PATH ###
     workflow.add_edge(START, "parse_resume")
-    workflow.add_edge("parse_resume", "company_research")
-    workflow.add_edge("company_research", "parse_job_description")
-    workflow.add_edge("parse_job_description", "experience_analyzer")
+    workflow.add_edge("parse_resume", "resume_company_research")
+    
+    #### JOB DESCRIPTION PATH ###
+    workflow.add_edge(START, "parse_job_description")
+    workflow.add_edge("parse_job_description", "job_company_research")
+
+    #### ANALYSIS PATH ###
+    workflow.add_edge("resume_company_research", "experience_analyzer")
+    workflow.add_edge("job_company_research", "experience_analyzer")
     workflow.add_edge("experience_analyzer", END)
     
     # Compile and return the graph
