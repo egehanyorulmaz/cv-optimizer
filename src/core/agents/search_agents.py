@@ -4,12 +4,14 @@ from langchain_community.tools.tavily_search import TavilySearchResults
 from langchain_openai import ChatOpenAI
 
 from pydantic import BaseModel, Field
-from typing import Type, Optional, Dict, Any, List
+from typing import Type, Optional, Dict, Any, List, Literal
+import logging
 
 from src.core.ports.secondary.template_service import TemplateService
 from src.core.agents.utils.state import AgentState
-from src.core.domain.company_search import CompanySearchResponse
+from src.core.domain.company_search import CompanyInfo
 
+logger = logging.getLogger("core.agents.search_agents")
 
 def get_search_tool(max_results=3, time_range="month"):
     """
@@ -30,7 +32,7 @@ def get_search_tool(max_results=3, time_range="month"):
         topic="general",           # Use "general" for company information
     )
 
-async def create_company_search_agent(response_format: Type[BaseModel], 
+def create_company_search_agent(response_format: Type[BaseModel], 
                                 template_service: TemplateService,
                                 model_name="gpt-3.5-turbo"):
     """
@@ -65,25 +67,26 @@ async def create_company_search_agent(response_format: Type[BaseModel],
 
 async def search_company_info(company_name: str, 
                         template_service: TemplateService, 
-                        model_name="gpt-3.5-turbo") -> Optional[CompanySearchResponse]:
+                        model_name="gpt-3.5-turbo") -> Optional[CompanyInfo]:
     """
     Search for up-to-date information about a company and return structured data.
     """
+    logger.info(f"Collecting more details on {company_name}")
     # TODO: Retry on OpenAI rate limit errors
     search_query = template_service.render_prompt(
         "prompts/company_search/search_query.j2",
-        **{"company_name": company_name, "search_result_format": CompanySearchResponse.model_json_schema()}
+        **{"company_name": company_name, "search_result_format": CompanyInfo.model_json_schema()}
     )
     
     try:
-        agent = await create_company_search_agent(CompanySearchResponse, template_service, model_name)
+        agent = create_company_search_agent(CompanyInfo, template_service, model_name)
         response = await agent.ainvoke(
             {"messages": [{"role": "user", "content": search_query}]}
         )
         
         if "structured_response" in response:
             result = response["structured_response"]
-            return CompanySearchResponse.model_validate(result)
+            return CompanyInfo.model_validate(result)
         else:
             print("No structured response found in agent output")
             return None
@@ -92,23 +95,39 @@ async def search_company_info(company_name: str,
         return None
 
 
-async def main():
+
+
+if __name__ == "__main__":
+    import asyncio
     from src.core.domain.config import TemplateConfig
     from src.infrastructure.template.jinja_template_service import JinjaTemplateService
     template_config = TemplateConfig.development()
     template_service = JinjaTemplateService(config=template_config)
     
-    company_info = await search_company_info("Apple Inc.", template_service, model_name="gpt-4o")
-    
-    if company_info:
-        print("\nCompany Information:")
-        print(f"Name: {company_info.company_name}")
-        print(f"Industry: {company_info.company_industry}")
-        print(f"Size: {company_info.company_size} employees")
-        print(f"Revenue: {company_info.company_revenue}")
-        print(f"Location: {company_info.company_location}")
-        print(f"Website: {company_info.company_website}")
-        print(f"Founded: {company_info.founded_year or 'Unknown'}")
-        print(f"Description: {company_info.company_description}")
-    else:
-        print("Could not retrieve company information.")
+    async def main():
+        companies = ["Apple Inc.", "Microsoft", "Google", "A non-existent company", 
+                     "NVIDIA", "Tesla", "Amazon", "Meta"]
+        concurrency_limit = 5
+        
+        tasks = [search_company_info(company_name=name, template_service=template_service, 
+                                     model_name="gpt-4.1-mini") for name in companies]
+        results = await asyncio.gather(*tasks)
+        
+        company_info_map = {info.name: info for info in results if info}
+
+        for company_name in companies:
+            company_info = company_info_map.get(company_name)
+            if company_info:
+                print("\nCompany Information:")
+                print(f"  Name: {company_info.name}")
+                print(f"  Industry: {company_info.industry}")
+                print(f"  Size: {company_info.size} employees")
+                print(f"  Revenue: {company_info.revenue}")
+                print(f"  Location: {company_info.location}")
+                print(f"  Website: {company_info.website}")
+                print(f"  Founded: {company_info.founded_year or 'Unknown'}")
+                print(f"  Description: {company_info.description}")
+            else:
+                print(f"\nCould not retrieve company information for {company_name}.")
+
+    asyncio.run(main())
