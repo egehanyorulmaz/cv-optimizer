@@ -1,6 +1,6 @@
 from typing import List, Optional, TypedDict, Dict
 
-from src.core.domain.company_search import CompanySearchResponse
+from src.core.domain.company_search import CompanyInfo
 from src.core.domain.resume import Resume
 from src.core.domain.job_description import JobDescription
 from src.core.domain.resume_match import (
@@ -25,7 +25,8 @@ class AgentState(TypedDict):
     job_description: JobDescription
     
     # Enriched data
-    company_info: Optional[Dict[str, CompanySearchResponse]]
+    resume_company_info: Optional[Dict[str, CompanyInfo]]
+    job_description_company_info: Optional[Dict[str, CompanyInfo]]
     
     # Analysis results (populated by agents)
     skill_matches: Optional[List[SkillMatch]]
