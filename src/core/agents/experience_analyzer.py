@@ -96,7 +96,7 @@ async def format_job_details_for_prompt(job: JobDescription) -> Dict[str, str]:
 @traceable(run_type="parser")
 async def analyze_experience_node(
     state: AgentState,
-    extractor: Optional[LLMExtractor] = None
+    extractor: LLMExtractor
 ) -> Dict[str, Optional[ExperienceAlignment]]:
     '''
     Analyzes the resume's experience section against the job description 
@@ -127,7 +127,8 @@ async def analyze_experience_node(
             template_path="prompts/agents/experience_analyzer.j2",
             template_vars={"resume_experiences": experiences_text,
                           "job_description": job_description,
-                          "total_years_experience": total_years},
+                          "total_years_experience": total_years,
+                          "hr_feedback": state.get("company_alignment_feedback")},
             output_model=ExperienceAlignment
         )
         
