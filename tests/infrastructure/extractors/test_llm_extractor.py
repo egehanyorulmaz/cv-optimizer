@@ -3,7 +3,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock, patch, MagicMock
 
 from src.infrastructure.ai_providers.openai_provider import OpenAIProvider
-from src.core.domain.config import AIProviderConfig, TemplateConfig
+from src.core.domain.config import AIProviderConfig, OpenAIConfig, TemplateConfig
 from src.infrastructure.template.jinja_template_service import JinjaTemplateService
 from src.core.domain.resume import Resume
 from src.infrastructure.extractors.llm_extractor import LLMStructuredExtractor
@@ -124,7 +124,7 @@ async def test_llm_extractor_resume_parse(mock_openai_setup):
     :type mock_openai_setup: MagicMock
     :raises AssertionError: If the parsing fails or returns unexpected results
     """
-    ai_config = AIProviderConfig()
+    ai_config = OpenAIConfig()
     template_config = TemplateConfig.development()
     
     # Create extractor with correct parameters (no output_model)
