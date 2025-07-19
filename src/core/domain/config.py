@@ -56,9 +56,9 @@ class OpenAIConfig(AIProviderConfig):
 @dataclass
 class AnthropicConfig(AIProviderConfig):
     """Anthropic-specific configuration."""
-    model_name: str = "claude-3-sonnet-20240229"
+    model_name: str = "claude-3.5-sonnet-20241022"
 
 @dataclass
 class GeminiConfig(AIProviderConfig):
     """Gemini-specific configuration."""
-    model_name: str = "gemini-1.5-pro"
+    model_name: str = "gemini-2.5-pro"
