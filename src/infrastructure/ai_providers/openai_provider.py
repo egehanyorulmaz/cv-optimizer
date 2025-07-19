@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from langsmith import traceable
 import openai
-from src.core.ports.secondary.ai_provider import AIProvider, AIOptions
+from src.core.ports.secondary.ai_provider import AIProvider, AIOptions, OpenAIOptions
 from src.infrastructure.ai_providers.exceptions import AIProviderError
 from src.core.domain.config import OpenAIConfig
 from langsmith.wrappers import wrap_openai
@@ -30,11 +30,12 @@ class OpenAIProvider(AIProvider):
         except Exception as e:
             raise AIProviderError(f"Failed to initialize OpenAI client: {str(e)}")
             
-        self.global_options = AIOptions(
+        self.global_options = OpenAIOptions(
             temperature=config.temperature,
-            max_tokens=config.max_tokens
+            max_tokens=config.max_tokens,
+            model=config.model_name
         )
-        self.model_name = config.model_name
+        self.default_model = config.model_name
 
     @traceable(run_type="llm")
     async def complete(self, prompt: str, 
@@ -53,9 +54,14 @@ class OpenAIProvider(AIProvider):
         # Use prompt-specific options if provided, otherwise use global options
         options_to_use = prompt_specific_options if prompt_specific_options else self.global_options
         
+        # Determine which model to use
+        model_to_use = self.default_model
+        if isinstance(options_to_use, OpenAIOptions) and options_to_use.model:
+            model_to_use = options_to_use.model
+        
         try:
             response = await self.client.chat.completions.create(
-                model=self.model_name,
+                model=model_to_use,
                 temperature=options_to_use.temperature,
                 max_tokens=options_to_use.max_tokens,
                 messages=[{"role": "user", "content": prompt}]
