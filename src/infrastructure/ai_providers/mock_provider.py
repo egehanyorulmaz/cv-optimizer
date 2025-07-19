@@ -1,7 +1,7 @@
 from typing import List, Optional, Dict, Any
 import os
 import json
-from src.core.ports.secondary.ai_provider import AIProvider, AIOptions
+from src.core.ports.secondary.ai_provider import AIProvider, AIOptions, OpenAIOptions
 from src.core.domain.config import AIProviderConfig
 from langsmith import traceable
 
@@ -15,12 +15,13 @@ class MockAIProvider(AIProvider):
         :param config: Configuration for AI provider containing global options
         :type config: AIProviderConfig
         """
-        self.global_options = AIOptions(
+        self.global_options = OpenAIOptions(
             temperature=config.temperature,
-            max_tokens=config.max_tokens
+            max_tokens=config.max_tokens,
+            model=getattr(config, 'model_name', 'mock-model')
         )
-        self.model_name = config.model_name
-        self.responses = {}  # Can be populated with predefined responses for testing
+        self.default_model = getattr(config, 'model_name', 'mock-model')
+        self.responses: Dict[str, str] = {}  # Can be populated with predefined responses for testing
         self.default_structured_responses = {
             # Default response for experience alignment
             "experience_analyzer": json.dumps({
@@ -33,7 +34,7 @@ class MockAIProvider(AIProvider):
         }
 
     @traceable(run_type="llm")
-    async def complete(self, prompt: str, prompt_specific_options: AIOptions = None) -> str:
+    async def complete(self, prompt: str, prompt_specific_options: Optional[AIOptions] = None) -> str:
         """
         Mock completion that returns predefined responses or a default response.
         
