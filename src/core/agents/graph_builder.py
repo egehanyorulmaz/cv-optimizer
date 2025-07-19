@@ -1,9 +1,7 @@
 from src.core.agents.experience_analyzer import analyze_experience_node
 from src.infrastructure.ai_providers.openai_provider import OpenAIProvider
 from src.infrastructure.template.jinja_template_service import JinjaTemplateService
-from src.core.domain.config import AIProviderConfig, OpenAIConfig, TemplateConfig
-
-from src.core.domain.job_description import JobDescription
+from src.core.domain.config import OpenAIConfig, TemplateConfig
 from src.core.domain.constants import TEST_RESUME_FILE_PATH, TEST_JOB_DESCRIPTION_FILE_PATH
 
 # agent
@@ -63,7 +61,7 @@ if __name__ == "__main__":
     logger.info("Building graph...")
     from dotenv import load_dotenv
     load_dotenv()
-    
+
     ai_provider = OpenAIProvider(config=OpenAIConfig())
     template_service = JinjaTemplateService(config=TemplateConfig.development())
 
