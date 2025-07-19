@@ -8,7 +8,8 @@ from src.core.domain.resume_match import (
     ExperienceAlignment, 
     ProjectMatch, 
     KeywordFrequency, 
-    PriorityImprovement
+    PriorityImprovement,
+    CompanyAlignment
 )
 
 
@@ -29,19 +30,26 @@ class AgentState(TypedDict):
     job_description_company_info: Optional[Dict[str, CompanyInfo]]
     
     # Analysis results (populated by agents)
-    skill_matches: Optional[List[SkillMatch]]
     experience_alignment: Optional[ExperienceAlignment]
-    project_matches: Optional[List[ProjectMatch]]
-    education_alignment: Optional[float]
-    keyword_analysis: Optional[List[KeywordFrequency]]
-    critical_missing_keywords: Optional[List[str]]
+    company_alignment: Optional[CompanyAlignment]
     
     # Synthesis results
-    top_strengths: Optional[List[str]]
-    critical_gaps: Optional[List[str]]
     overall_match_percentage: Optional[float]
-    interview_probability: Optional[float]
+    company_alignment_feedback: Optional[str]
     
+    # TODO
+    # interview_probability: Optional[float]
+    # top_strengths: Optional[List[str]]
+    # critical_gaps: Optional[List[str]]
+    # skill_matches: Optional[List[SkillMatch]]
+    # project_matches: Optional[List[ProjectMatch]]
+    # education_alignment: Optional[float]
+    # keyword_analysis: Optional[List[KeywordFrequency]]
+    # section_analysis: Optional[List[SectionAnalysis]]
+    # priority_improvements: Optional[List[PriorityImprovement]]
+    # general_suggestions: Optional[List[str]]
+    # critical_missing_keywords: Optional[List[str]]
+
     # Suggestions
     priority_improvements: Optional[List[PriorityImprovement]]
     general_suggestions: Optional[List[str]]

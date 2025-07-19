@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 from typing import Protocol, Optional, List
-from langsmith import traceable
-
 
 @dataclass
 class AIOptions:
@@ -11,12 +9,7 @@ class AIOptions:
 
 
 class AIProvider(Protocol):
-    @traceable(run_type="llm")
-    async def complete(self, prompt: str, options: AIOptions) -> str:
+    async def complete(self, prompt: str, 
+                       prompt_specific_options: Optional[AIOptions] = None) -> str:
         """Generate completion for the given prompt"""
         raise NotImplementedError("AIProvider.complete is not implemented")
-
-    @traceable(run_type="llm")
-    async def embed(self, text: str) -> List[float]:
-        """Generate embeddings for the given text"""
-        raise NotImplementedError("AIProvider.embed is not implemented")

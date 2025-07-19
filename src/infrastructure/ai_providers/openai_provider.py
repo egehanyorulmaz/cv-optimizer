@@ -1,11 +1,11 @@
-from typing import List
+from typing import Optional
 import os
 from dotenv import load_dotenv
+from langsmith import traceable
 import openai
 from src.core.ports.secondary.ai_provider import AIProvider, AIOptions
 from src.infrastructure.ai_providers.exceptions import AIProviderError
 from src.core.domain.config import OpenAIConfig
-from langsmith import traceable
 from langsmith.wrappers import wrap_openai
 
 class OpenAIProvider(AIProvider):
@@ -36,14 +36,16 @@ class OpenAIProvider(AIProvider):
         )
         self.model_name = config.model_name
 
-    async def complete(self, prompt: str, prompt_specific_options: AIOptions = None) -> str:
+    @traceable(run_type="llm")
+    async def complete(self, prompt: str, 
+                       prompt_specific_options: Optional[AIOptions] = None) -> str:
         """
         Generate completion using OpenAI API.
         
         :param prompt: Input prompt
         :type prompt: str
         :param prompt_specific_options: Options specific to this prompt call, overrides global options if provided
-        :type prompt_specific_options: AIOptions, optional
+        :type prompt_specific_options: AIOptions
         :return: Generated completion text
         :rtype: str
         :raises AIProviderError: If API call fails.
@@ -58,6 +60,7 @@ class OpenAIProvider(AIProvider):
                 max_tokens=options_to_use.max_tokens,
                 messages=[{"role": "user", "content": prompt}]
             )
-            return response.choices[0].message.content
+            completion = response.choices[0].message.content
+            return completion if completion is not None else ""
         except Exception as e:
             raise AIProviderError(f"OpenAI API error: {str(e)}")
