@@ -34,6 +34,16 @@ class SkillLevel(str, Enum):
     ADVANCED = "advanced"
     EXPERT = "expert"
 
+class CompanyAlignment(BaseModel):
+    """
+    Represents the alignment between the candidate's past companies and the target company.
+
+    :ivar size_alignment: Alignment of the candidate's past companies' size with the target company's size
+    :ivar industry_alignment: Alignment of the candidate's past companies' industry with the target company's industry
+    """
+    size_alignment: ReasonedAttribute[float]
+    industry_alignment: ReasonedAttribute[float]
+
 
 class SkillRelationship(BaseModel):
     """
@@ -104,8 +114,8 @@ class ExperienceAlignment(BaseModel):
     role_similarity: ReasonedAttribute[float]
     domain_relevance: ReasonedAttribute[float]
     tech_stack_overlap: ReasonedAttribute[float]
-    leadership_alignment: Optional[ReasonedAttribute[float]] = None
-    company_size_relevance: Optional[ReasonedAttribute[float]] = None
+    leadership_alignment: Optional[ReasonedAttribute[float]] = None 
+    company_alignment: Optional[CompanyAlignment] = None
 
     def get_years_overlap_value(self) -> float:
         """Get the numeric value of years_overlap."""
@@ -253,6 +263,7 @@ class ResumeMatchResult(BaseModel):
     experience_alignment: Optional[ExperienceAlignment] = None
     project_matches: List[ProjectMatch]
     education_alignment: Optional[float] = Field(default=None, ge=0, le=1)
+    company_alignment: Optional[CompanyAlignment] = None
     keyword_analysis: Optional[List[KeywordFrequency]] = None
     section_analysis: Optional[List[SectionAnalysis]] = None
     priority_improvements: List[PriorityImprovement]
