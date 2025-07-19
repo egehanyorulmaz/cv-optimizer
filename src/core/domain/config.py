@@ -43,10 +43,22 @@ class TemplateConfig:
 
 @dataclass
 class AIProviderConfig:
-    model_name: str = "gpt-4o"
+    """Base configuration for AI providers with common settings."""
     temperature: float = 0.1
     max_tokens: Optional[int] = None
 
 @dataclass
 class OpenAIConfig(AIProviderConfig):
+    """OpenAI-specific configuration."""
+    model_name: str = "gpt-4o"
     api_version: str = "2024-02-15"
+
+@dataclass
+class AnthropicConfig(AIProviderConfig):
+    """Anthropic-specific configuration."""
+    model_name: str = "claude-3-sonnet-20240229"
+
+@dataclass
+class GeminiConfig(AIProviderConfig):
+    """Gemini-specific configuration."""
+    model_name: str = "gemini-1.5-pro"
