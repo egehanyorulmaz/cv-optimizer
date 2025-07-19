@@ -48,7 +48,7 @@ def create_company_search_agent(response_format: Type[BaseModel],
     search_tool = get_search_tool()
     
     model = ChatOpenAI(
-        model_name=model_name, 
+        model=model_name, 
         temperature=0.2,
     )
     
@@ -101,6 +101,8 @@ if __name__ == "__main__":
     import asyncio
     from src.core.domain.config import TemplateConfig
     from src.infrastructure.template.jinja_template_service import JinjaTemplateService
+    from dotenv import load_dotenv
+    load_dotenv()
     template_config = TemplateConfig.development()
     template_service = JinjaTemplateService(config=template_config)
     
