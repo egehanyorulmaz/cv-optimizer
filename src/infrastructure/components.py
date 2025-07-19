@@ -4,7 +4,7 @@ from src.core.ports.secondary.template_service import TemplateService
 from src.infrastructure.ai_providers.openai_provider import OpenAIProvider
 from src.infrastructure.ai_providers.mock_provider import MockAIProvider
 from src.infrastructure.template.jinja_template_service import JinjaTemplateService
-from src.core.domain.config import AIProviderConfig, TemplateConfig
+from src.core.domain.config import AIProviderConfig, OpenAIConfig, TemplateConfig
 from src.infrastructure.extractors.llm_extractor import LLMStructuredExtractor
 
 def create_ai_provider() -> AIProvider:
@@ -14,13 +14,13 @@ def create_ai_provider() -> AIProvider:
     :return: An implementation of AIProvider
     :rtype: AIProvider
     """
-    config = AIProviderConfig()
-    
     # Use MockAIProvider for testing environment
     if os.getenv("TESTING", "false").lower() == "true":
+        config = AIProviderConfig()
         return MockAIProvider(config=config)
     
     # Use OpenAIProvider for production
+    config = OpenAIConfig()
     return OpenAIProvider(config=config)
 
 def create_template_service() -> TemplateService:
