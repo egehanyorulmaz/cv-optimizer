@@ -10,14 +10,12 @@ class TemplateService(Protocol):
     """
     
     @abstractmethod
-    def render_prompt(self, template_name: str, **kwargs: Dict[str, Any]) -> str:
+    def render_prompt(self, template_name: str, **kwargs) -> str:
         """
         Render a template with the given context variables.
         
         :param template_name: Name or path of the template to render
         :type template_name: str
-        :param kwargs: Variables to pass to the template
-        :type kwargs: Dict[str, Any]
         :return: Rendered template string
         :rtype: str
         :raises TemplateNotFoundError: If template doesn't exist
