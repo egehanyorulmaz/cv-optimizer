@@ -21,7 +21,7 @@ class MockAIProvider(AIProvider):
             model=getattr(config, 'model_name', 'mock-model')
         )
         self.default_model = getattr(config, 'model_name', 'mock-model')
-        self.responses = {}  # Can be populated with predefined responses for testing
+        self.responses: Dict[str, str] = {}  # Can be populated with predefined responses for testing
         self.default_structured_responses = {
             # Default response for experience alignment
             "experience_analyzer": json.dumps({
@@ -34,7 +34,7 @@ class MockAIProvider(AIProvider):
         }
 
     @traceable(run_type="llm")
-    async def complete(self, prompt: str, prompt_specific_options: AIOptions = None) -> str:
+    async def complete(self, prompt: str, prompt_specific_options: Optional[AIOptions] = None) -> str:
         """
         Mock completion that returns predefined responses or a default response.
         
