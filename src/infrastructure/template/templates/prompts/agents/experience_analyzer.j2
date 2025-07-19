@@ -13,10 +13,14 @@ Tech Stack Relevant to Experience:
 Key Requirements Relevant to Experience:
 {{ job_description.job_requirements }}
 
+HR's feedback on the candidate's experience:
+{{ hr_feedback }}
+
 **Candidate's Total Calculated Years of Experience:** {{ total_years_experience }}
 
 **Instructions:**
 Evaluate the alignment based on the following criteria. Provide your assessment as a JSON object matching the specified format. Do not include explanations outside the JSON structure.
+Be thorough and diligent in your reasoning. Don't skip any details. Don't make assumptions.
 
 **Output JSON Format:**
 {
@@ -40,9 +44,15 @@ Evaluate the alignment based on the following criteria. Provide your assessment 
     "score": float | null,
     "reasoning": "string explanation"
   },
-  "company_size_relevance": {
-    "score": float | null,
-    "reasoning": "string explanation"
+  "company_alignment": {
+    "size_alignment": {
+      "score": float,
+      "reasoning": "string explanation"
+    },
+    "industry_alignment": {
+      "score": float,
+      "reasoning": "string explanation"
+    }
   }
 }
 
@@ -51,7 +61,7 @@ Evaluate the alignment based on the following criteria. Provide your assessment 
 - `domain_relevance`: Look for industry keywords, company descriptions (if inferrable), and project contexts.
 - `tech_stack_overlap`: Identify specific tools, languages, platforms mentioned in resume descriptions and compare against the job's tech stack list.
 - `leadership_alignment`: Search for keywords like 'led', 'managed', 'supervised', 'mentored', 'coordinated team', etc., and assess relevance to the target role's seniority/scope.
-- `company_size_relevance`: This is often hard to gauge; only score if there are clear indicators (e.g., "fast-paced startup environment" vs. "large enterprise systems"). Default to null if uncertain.
+- `company_alignment`: Compare the candidate's past companies' size and industry with the target company's size and industry.
 
 Now, generate the JSON output based on your analysis of the provided texts.
 
